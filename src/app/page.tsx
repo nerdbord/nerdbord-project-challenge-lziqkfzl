@@ -35,19 +35,7 @@ export default function Page() {
         </button>
         <pre>{JSON.stringify(image, null, 2)}</pre>
       </div>
-      <div className="space-y-4">
-        <h1 className="text-xl font-semibold">Stream Object Example</h1>
-        <button
-          onClick={async () => {
-            const result = await generateJoke();
-
-            setObject(result);
-          }}
-        >
-          Tell me a joke
-        </button>
-        <pre>{JSON.stringify(object, null, 2)}</pre>
-      </div>
     </div>
   );
 }
+/* https://www.youtube.com/watch?v=UDm-hvwpzBI */
