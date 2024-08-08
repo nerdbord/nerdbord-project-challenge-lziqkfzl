@@ -1,9 +1,12 @@
-import Image from "next/image";
+import { checkUserInDatabase } from "@/actions/user";
+import { FormGenerator } from "@/components/FormGenerator";
 
-export default function Home() {
+export default async function Page() {
+  const prisma_user = await checkUserInDatabase();
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      app
-    </main>
+    <div className="space-y-4">
+      <FormGenerator />
+    </div>
   );
 }
