@@ -25,7 +25,6 @@ export const FormGenerator: React.FC = () => {
     setError(null);
     try {
       const result = await generateFormAction(prompt);
-      console.log(result);
       return result;
     } catch (err) {
       setError("Failed to generate form. Please try again.");
@@ -43,26 +42,36 @@ export const FormGenerator: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>Form Generator</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Enter prompt"
-        />
-        <button type="submit" disabled={loading}>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Form Generator</h1>
+      <form onSubmit={handleSubmit} className="mb-4 space-y-4">
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text">Prompt</span>
+          </label>
+          <input
+            type="text"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="Enter prompt"
+            className="input input-bordered w-full"
+          />
+        </div>
+        <button
+          type="submit"
+          className={`btn btn-primary ${loading ? "loading" : ""}`}
+          disabled={loading}
+        >
           {loading ? "Generating..." : "Generate"}
         </button>
       </form>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="text-red-500">{error}</p>}
       {form && (
         <form>
           {form.fields.map((field, index) => (
             <div key={index}>
               <label>
-                {field.label}
+                {field.label} {field.type}
                 <input
                   type={field.type}
                   name={field.name}
