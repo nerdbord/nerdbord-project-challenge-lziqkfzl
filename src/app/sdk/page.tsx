@@ -1,7 +1,8 @@
+"use client";
 import { generateTextAction, describeImage } from "@/actions/form";
 import { useState } from "react";
 
-export default async function Page() {
+export default function Page() {
   const [generation, setGeneration] = useState("");
   const [image, setImage] = useState("");
   const [object, setObject] = useState({});

@@ -1,9 +1,21 @@
 "use server";
 
-import { generateText, DeepPartial, streamObject, generateObject } from "ai";
-import { createStreamableValue } from "ai/rsc";
-import { openai } from "@ai-sdk/openai";
+import { generateText, generateObject } from "ai";
+import { createOpenAI } from "@ai-sdk/openai";
 import { z } from "zod";
+
+//custom Nerdbord OpenAI client
+const openai = createOpenAI({
+  fetch: async (url, options) => {
+    const fullUrl =
+      "https://training.nerdbord.io/api/v1/openai/chat/completions";
+    console.log(`Fetching ${fullUrl}`);
+    const result = await fetch(fullUrl, options);
+    console.log(`Fetched ${fullUrl}`);
+    console.log();
+    return result;
+  },
+});
 
 export const generateTextAction = async () => {
   const result = await generateText({

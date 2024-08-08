@@ -1,7 +1,6 @@
 "use server";
 import { currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
-import { v4 as uuidv4 } from "uuid";
 
 export async function checkUserInDatabase() {
   try {
