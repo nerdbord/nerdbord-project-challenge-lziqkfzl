@@ -9,7 +9,7 @@ generator client {
 }
 
 datasource db {
-provider = "cockroachdb"
+  provider = "cockroachdb"
   url      = env("DATABASE_URL")
 }
 
