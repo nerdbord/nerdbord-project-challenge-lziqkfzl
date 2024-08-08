@@ -1,5 +1,5 @@
 "use client";
-import { generateTextAction, describeImage } from "@/actions/form";
+import { generateTextAction, describeImage } from "@/actions/sdk";
 import { useState } from "react";
 
 export default function Page() {
