@@ -16,7 +16,7 @@ export const generateForm = async (prompt: string) => {
             type: z
               .string()
               .describe(
-                "the type of the form field (e.g., text, number, email)"
+                "the type of the form field (e.g., text, number, email, textarea, select)"
               ),
             label: z.string().describe("the label for the form field"),
             placeholder: z
@@ -27,11 +27,17 @@ export const generateForm = async (prompt: string) => {
               .boolean()
               .optional()
               .describe("whether the field is required or not"),
+
+            options: z
+              .array(z.string())
+              .optional()
+              .describe("the options for select field"),
           })
         )
         .describe("the fields of the form"),
     }),
   });
 
+  console.log(result.object);
   return result.object;
 };

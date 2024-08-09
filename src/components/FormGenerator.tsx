@@ -1,6 +1,6 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { generateForm as generateFormAction } from "@/actions/form";
+import React, { useState } from "react";
+import { generateForm } from "@/actions/form";
 
 type FormField = {
   name: string;
@@ -8,6 +8,8 @@ type FormField = {
   label: string;
   placeholder?: string;
   required?: boolean;
+  class?: string;
+  options?: string[];
 };
 
 type Form = {
@@ -20,25 +22,19 @@ export const FormGenerator: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const generateForm = async (prompt: string): Promise<Form | null> => {
+  const handleSubmit = async (e: React.FormEvent) => {
     setLoading(true);
     setError(null);
     try {
-      const result = await generateFormAction(prompt);
-      return result;
+      e.preventDefault();
+      const generatedForm = await generateForm(prompt);
+      setForm(generatedForm);
     } catch (err) {
       setError("Failed to generate form. Please try again.");
       console.error(err);
-      return null;
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const generatedForm = await generateForm(prompt);
-    setForm(generatedForm);
   };
 
   return (
@@ -69,15 +65,37 @@ export const FormGenerator: React.FC = () => {
       {form && (
         <form>
           {form.fields.map((field, index) => (
-            <div key={index}>
-              <label>
-                {field.label} {field.type}
-                <input
-                  type={field.type}
-                  name={field.name}
-                  placeholder={field.placeholder}
-                  required={field.required}
-                />
+            <div key={index} className="mb-4">
+              <label className="block mb-2">
+                {field.label}
+                {field.type === "textarea" ? (
+                  <textarea
+                    name={field.name}
+                    placeholder={field.placeholder}
+                    className="textarea"
+                    required={field.required}
+                  />
+                ) : field.type === "select" ? (
+                  <select
+                    name={field.name}
+                    className="select"
+                    required={field.required}
+                  >
+                    {field.options?.map((option, idx) => (
+                      <option key={idx} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type={field.type}
+                    name={field.name}
+                    placeholder={field.placeholder}
+                    className="input"
+                    required={field.required}
+                  />
+                )}
               </label>
             </div>
           ))}
