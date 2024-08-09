@@ -21,10 +21,10 @@ export const FormGenerator: React.FC = () => {
   const [prompt, setPrompt] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [isEdited, setIsEdited] = useState<number | null>(null); // Tracks the index of the edited field
+  const [isEdited, setIsEdited] = useState<number | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    if (isEdited !== null) return; // Prevent submission if any field is being edited
+    if (isEdited !== null) return;
     setLoading(true);
     setError(null);
     try {
@@ -33,7 +33,7 @@ export const FormGenerator: React.FC = () => {
       setForm(generatedForm);
     } catch (err) {
       setError("Failed to generate form. Please try again.");
-      console.error(err);
+      setLoading(false);
     } finally {
       setLoading(false);
     }
