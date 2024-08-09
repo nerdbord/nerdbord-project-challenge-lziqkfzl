@@ -21,6 +21,7 @@ export const FormGenerator: React.FC = () => {
   const [prompt, setPrompt] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     setLoading(true);
@@ -34,6 +35,46 @@ export const FormGenerator: React.FC = () => {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleFieldChange = (
+    index: number,
+    key: keyof FormField,
+    value: any
+  ) => {
+    if (!form) return;
+    const updatedFields = form.fields.map((field, i) =>
+      i === index ? { ...field, [key]: value } : field
+    );
+    setForm({ ...form, fields: updatedFields });
+  };
+
+  const toggleEdit = () => {
+    setIsEditing(!isEditing);
+  };
+
+  const getDaisyUIClasses = (type: string) => {
+    switch (type) {
+      case "text":
+      case "number":
+      case "email":
+      case "password":
+        return "input input-bordered w-full";
+      case "checkbox":
+        return "checkbox checkbox-primary";
+      case "radio":
+        return "radio radio-primary";
+      case "textarea":
+        return "textarea textarea-bordered w-full";
+      case "select":
+        return "select select-bordered w-full";
+      case "range":
+        return "range range-primary";
+      case "file":
+        return "file-input file-input-bordered file-input-accent w-full max-w-xs";
+      default:
+        return "input input-bordered w-full";
     }
   };
 
@@ -53,33 +94,52 @@ export const FormGenerator: React.FC = () => {
             className="input input-bordered w-full"
           />
         </div>
-        <button
-          type="submit"
-          className={`btn btn-primary ${loading ? "loading" : ""}`}
-          disabled={loading}
-        >
-          {loading ? "Generating..." : "Generate"}
-        </button>
+        <div className="flex gap-2">
+          <button
+            type="submit"
+            className={`btn btn-primary ${loading ? "loading" : ""}`}
+            disabled={loading}
+          >
+            {loading ? "Generating..." : "Generate"}
+          </button>
+          {form && (
+            <button className="btn btn-secondary" onClick={toggleEdit}>
+              {isEditing ? "Save" : "Edit"}
+            </button>
+          )}
+        </div>
       </form>
       {error && <p className="text-red-500">{error}</p>}
+
       {form && (
-        <form>
-          {form.fields.map((field, index) => (
-            <div key={index} className="mb-4">
-              <label className="block mb-2">
-                {field.label}
-                {field.type === "textarea" ? (
-                  <textarea
-                    name={field.name}
-                    placeholder={field.placeholder}
-                    className="textarea"
-                    required={field.required}
-                  />
-                ) : field.type === "select" ? (
+        <div>
+          <form>
+            {form.fields.map((field, index) => (
+              <div key={index} className="mb-4">
+                <label className="block mb-2">
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={field.label}
+                      onChange={(e) =>
+                        handleFieldChange(index, "label", e.target.value)
+                      }
+                      placeholder="Edit label"
+                      className="input input-bordered"
+                    />
+                  ) : (
+                    field.label
+                  )}
+                </label>
+                {field.type === "select" ? (
                   <select
                     name={field.name}
-                    className="select"
                     required={field.required}
+                    onChange={(e) =>
+                      isEditing &&
+                      handleFieldChange(index, "placeholder", e.target.value)
+                    }
+                    className={getDaisyUIClasses(field.type)}
                   >
                     {field.options?.map((option, idx) => (
                       <option key={idx} value={option}>
@@ -87,19 +147,34 @@ export const FormGenerator: React.FC = () => {
                       </option>
                     ))}
                   </select>
+                ) : field.type === "textarea" ? (
+                  <textarea
+                    name={field.name}
+                    placeholder={field.placeholder}
+                    required={field.required}
+                    onChange={(e) =>
+                      isEditing &&
+                      handleFieldChange(index, "placeholder", e.target.value)
+                    }
+                    className={getDaisyUIClasses(field.type)}
+                  />
                 ) : (
                   <input
                     type={field.type}
                     name={field.name}
                     placeholder={field.placeholder}
-                    className="input"
                     required={field.required}
+                    onChange={(e) =>
+                      isEditing &&
+                      handleFieldChange(index, "placeholder", e.target.value)
+                    }
+                    className={getDaisyUIClasses(field.type)}
                   />
                 )}
-              </label>
-            </div>
-          ))}
-        </form>
+              </div>
+            ))}
+          </form>
+        </div>
       )}
     </div>
   );
