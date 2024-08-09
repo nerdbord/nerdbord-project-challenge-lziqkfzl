@@ -33,7 +33,6 @@ export const FormGenerator: React.FC = () => {
       setForm(generatedForm);
     } catch (err) {
       setError("Failed to generate form. Please try again.");
-      setLoading(false);
     } finally {
       setLoading(false);
     }
