@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import { generateForm } from "@/actions/form";
+import { checkUserInDatabase } from "@/actions/user";
+import { generateForm, saveForm } from "@/actions/form";
 
 type FormField = {
   name: string;
@@ -19,20 +20,50 @@ type Form = {
 export const FormGenerator: React.FC = () => {
   const [form, setForm] = useState<Form | null>(null);
   const [prompt, setPrompt] = useState<string>("");
-  const [error, setError] = useState<string | null>(null);
+  const [msg, setMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [isEdited, setIsEdited] = useState<number | null>(null);
+
+  const handleSaveForm = async () => {
+    if (!form) {
+      setMsg("No form to save.");
+      return;
+    }
+
+    setLoading(true);
+    setMsg(null);
+    try {
+      const user = await checkUserInDatabase();
+
+      if (!user || typeof user === "string") {
+        setMsg("User not found in the database.");
+        return;
+      }
+
+      const savedForm = await saveForm({
+        userId: user.id,
+        name: "Generated Form",
+        description: "A dynamically generated form",
+        fields: form.fields,
+      });
+      console.log("Form saved successfully", savedForm);
+    } catch (err) {
+      setMsg("Failed to save form. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     if (isEdited !== null) return;
     setLoading(true);
-    setError(null);
+    setMsg(null);
     try {
       e.preventDefault();
       const generatedForm = await generateForm(prompt);
       setForm(generatedForm);
     } catch (err) {
-      setError("Failed to generate form. Please try again.");
+      setMsg("Failed to generate form. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -85,8 +116,16 @@ export const FormGenerator: React.FC = () => {
         >
           {loading ? "Generating..." : "Generate"}
         </button>
+        <button
+          type="button"
+          className={`btn btn-secondaryu ${loading ? "loading" : ""}`}
+          disabled={loading || isEdited !== null}
+          onClick={handleSaveForm}
+        >
+          {loading ? "Saving..." : "Save"}
+        </button>
       </form>
-      {error && <p className="text-red-500">{error}</p>}
+      {msg && <p>{msg}</p>}
       {form && (
         <form>
           {form.fields.map((field, index) => (
@@ -170,7 +209,7 @@ export const FormGenerator: React.FC = () => {
                       className="textarea textarea-bordered w-full"
                     />
                   ) : field.type === "select" ? (
-                    <select className="select select-bordered w-full" disabled>
+                    <select className="select select-bordered w-full">
                       {field.options?.map((option, idx) => (
                         <option key={idx} value={option}>
                           {option}
