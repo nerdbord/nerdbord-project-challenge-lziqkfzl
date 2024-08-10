@@ -42,7 +42,7 @@ export const Dashboard: React.FC = () => {
             <li key={form.id}>
               <h2>{form.name}</h2>
               <p>{form.description ?? "No description provided"}</p>
-              <p>Created at: {new Date(form.createdAt).toLocaleDateString()}</p>
+              <p>Created at: {new Date(form.createdAt).toISOString()}</p>
             </li>
           ))}
       </ul>
