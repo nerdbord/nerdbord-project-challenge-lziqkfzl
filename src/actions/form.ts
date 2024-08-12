@@ -97,20 +97,20 @@ export async function getUserForms() {
     const user = await checkUserInDatabase();
 
     if (!user || typeof user === "string") {
-      throw new Error("Authenticated user not found or has no ID.");
+      return "Authenticated user not found or has no ID.";
     }
 
-    const expenses = await prisma.form.findMany({
+    const forms = await prisma.form.findMany({
       where: { userId: user.id },
     });
 
-    if (!expenses) {
-      throw new Error("No expenses found for the user.");
+    if (!forms || forms.length === 0) {
+      return "No expenses found for the user.";
     }
 
-    return expenses;
+    return forms;
   } catch (error) {
     console.error("Failed to load expenses:", error);
-    throw error;
+    return error;
   }
 }

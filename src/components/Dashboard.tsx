@@ -14,7 +14,7 @@ interface Form {
 export const Dashboard: React.FC = () => {
   const fetcher = async (): Promise<Form[]> => {
     try {
-      const forms = await getUserForms();
+      const forms = (await getUserForms()) as Form[];
       return forms;
     } catch (error) {
       console.error("Error fetching forms:", error);
