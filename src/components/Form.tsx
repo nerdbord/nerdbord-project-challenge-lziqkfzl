@@ -115,11 +115,7 @@ export const Form: React.FC<FormComponentProps> = ({
                   ))}
                 </select>
               ) : (
-                <input
-                  type={field.type}
-                  placeholder={field.placeholder}
-                  className="input input-bordered w-full"
-                />
+                <input type={field.type} placeholder={field.placeholder} />
               )}
               <button
                 type="button"

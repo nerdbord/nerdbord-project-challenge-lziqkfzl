@@ -44,7 +44,7 @@ export const FormGenerator: React.FC = () => {
       const user = await checkUserInDatabase();
 
       if (!user || typeof user === "string") {
-        setMsg("Nie znaleziono użytkownika w bazie danych.");
+        setMsg("Aby zapisać formularz musisz być zalogowany.");
         return;
       }
 
