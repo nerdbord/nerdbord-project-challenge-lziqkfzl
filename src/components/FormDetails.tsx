@@ -77,6 +77,12 @@ export const FormDetails = () => {
       ) : (
         <>
           <h1 className="text-2xl font-bold mb-4">Form Details</h1>
+          <div>
+            {/*      dodac funkcjonalnosc */}
+            <button className="btn btn-primary ">Delete</button>
+            <button className="btn btn-secondary">Save</button>
+          </div>
+
           <Form
             fields={formFields}
             isEdited={isEdited}

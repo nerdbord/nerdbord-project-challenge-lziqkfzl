@@ -17,7 +17,7 @@ export const Header = async (props: Props) => {
 
   return (
     <div className="flex justify-between items-center navbar bg-base-100 fixed border-b">
-      <button>FormuLator</button>
+      <RedirectButton href="/">FormuLator</RedirectButton>
       <div>
         {user ? (
           <>
