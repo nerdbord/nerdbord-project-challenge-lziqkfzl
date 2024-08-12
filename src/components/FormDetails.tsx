@@ -17,7 +17,7 @@ type FormField = {
 export const FormDetails = () => {
   const params = useParams();
   const id = params?.id;
-  console.log("ID => ", id);
+
   const [formFields, setFormFields] = useState<FormField[]>([]);
   const [isEdited, setIsEdited] = useState<number | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
