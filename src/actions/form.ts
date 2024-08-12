@@ -116,6 +116,11 @@ export async function getUserForms() {
 }
 
 export const deleteForm = async (id: string) => {
+  if (!id) {
+    console.error("No form ID provided");
+    return;
+  }
+
   try {
     await prisma.formField.deleteMany({
       where: {
