@@ -16,7 +16,7 @@ export const Header = async (props: Props) => {
   console.log(user);
 
   return (
-    <div className="flex justify-between items-center navbar bg-base-100 fixed">
+    <div className="flex justify-between items-center navbar bg-base-100 fixed border-b">
       <button>FormuLator</button>
       <div>
         {user ? (
