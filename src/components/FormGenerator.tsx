@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { checkUserInDatabase } from "@/actions/user";
 import { generateForm, saveForm } from "@/actions/form";
+import { Form } from "@/components/Form";
 
 type FormField = {
   name: string;
@@ -26,7 +27,7 @@ export const FormGenerator: React.FC = () => {
 
   const handleSaveForm = async () => {
     if (!form) {
-      setMsg("No form to save.");
+      setMsg("Nie ma formularza do zapisania.");
       return;
     }
 
@@ -36,19 +37,19 @@ export const FormGenerator: React.FC = () => {
       const user = await checkUserInDatabase();
 
       if (!user || typeof user === "string") {
-        setMsg("User not found in the database.");
+        setMsg("Nie znaleziono użytkownika w bazie danych.");
         return;
       }
 
       const savedForm = await saveForm({
         userId: user.id,
-        name: "Generated Form",
-        description: "A dynamically generated form",
+        name: "Wygenerowany Formularz",
+        description: "Dynamically generated form",
         fields: form.fields,
       });
-      console.log("Form saved successfully", savedForm);
+      console.log("Formularz zapisany pomyślnie", savedForm);
     } catch (err) {
-      setMsg("Failed to save form. Please try again.");
+      setMsg("Nie udało się zapisać formularza. Spróbuj ponownie.");
     } finally {
       setLoading(false);
     }
@@ -63,7 +64,7 @@ export const FormGenerator: React.FC = () => {
       const generatedForm = await generateForm(prompt);
       setForm(generatedForm);
     } catch (err) {
-      setMsg("Failed to generate form. Please try again.");
+      setMsg("Nie udało się wygenerować formularza. Spróbuj ponownie.");
     } finally {
       setLoading(false);
     }
@@ -94,144 +95,51 @@ export const FormGenerator: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Form Generator</h1>
-      <form onSubmit={handleSubmit} className="mb-4">
-        <div className="form-control mb-4">
-          <label className="label">
-            <span className="label-text">Prompt</span>
-          </label>
-          <input
-            type="text"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Enter prompt"
-            className="input input-bordered w-full"
-          />
-        </div>
-        <button
-          type="submit"
-          className={`btn btn-primary ${loading ? "loading" : ""}`}
-          disabled={loading || isEdited !== null}
-        >
-          {loading ? "Generating..." : "Generate"}
-        </button>
-        <button
-          type="button"
-          className={`btn btn-secondaryu ${loading ? "loading" : ""}`}
-          disabled={loading || isEdited !== null}
-          onClick={handleSaveForm}
-        >
-          {loading ? "Saving..." : "Save"}
-        </button>
-      </form>
-      {msg && <p>{msg}</p>}
-      {form && (
-        <form>
-          {form.fields.map((field, index) => (
-            <div key={index} className="mb-4">
-              {isEdited === index ? (
-                <div className="space-y-2">
-                  <label className="label">
-                    <span className="label-text">Label</span>
-                    <input
-                      type="text"
-                      value={field.label}
-                      onChange={(e) =>
-                        handleFieldChange(index, "label", e.target.value)
-                      }
-                    />
-                  </label>
-                  <label className="label">
-                    <span className="label-text">Placeholder</span>
-                    <input
-                      type="text"
-                      value={field.placeholder || ""}
-                      onChange={(e) =>
-                        handleFieldChange(index, "placeholder", e.target.value)
-                      }
-                    />
-                  </label>
-                  <label className="label">
-                    <span className="label-text">Type</span>
-                    <select
-                      value={field.type}
-                      onChange={(e) =>
-                        handleFieldChange(index, "type", e.target.value)
-                      }
-                    >
-                      <option value="text">Text</option>
-                      <option value="textarea">Textarea</option>
-                      <option value="select">Select</option>
-                      <option value="email">Email</option>
-                      <option value="number">Number</option>
-                      <option value="file">File</option>
-                      <option value="radio">Radio</option>
-                      <option value="checkbox">Checkbox</option>
-                    </select>
-                  </label>
-                  {field.type === "select" && (
-                    <label className="label">
-                      <span className="label-text">Options</span>
-                      <input
-                        type="text"
-                        value={field.options?.join(", ") || ""}
-                        onChange={(e) =>
-                          handleFieldChange(
-                            index,
-                            "options",
-                            e.target.value
-                              .split(",")
-                              .map((opt) => opt.trim())
-                              .join(",")
-                          )
-                        }
-                        placeholder="Comma-separated options"
-                      />
-                    </label>
-                  )}
-                  <button
-                    type="button"
-                    onClick={saveField}
-                    className="btn btn-success mt-2"
-                  >
-                    Save
-                  </button>
-                </div>
-              ) : (
-                <div>
-                  <label className="label">
-                    <span className="label-text">{field.label}</span>
-                  </label>
-                  {field.type === "textarea" ? (
-                    <textarea
-                      placeholder={field.placeholder}
-                      className="textarea textarea-bordered w-full"
-                    />
-                  ) : field.type === "select" ? (
-                    <select className="select select-bordered w-full">
-                      {field.options?.map((option, idx) => (
-                        <option key={idx} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <input type={field.type} placeholder={field.placeholder} />
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => startEditing(index)}
-                    className="btn btn-info mt-2"
-                  >
-                    Edit
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
+    <div className="flex items-center justify-center h-svh">
+      <div className="container flex flex-col justify-center p-4 max-w-md">
+        <h1 className="text-2xl font-bold mb-4 text-center">
+          Generuj formularz za pomocą AI
+        </h1>
+        <p className="mb-4 text-center">
+          Stwórz formularz. Udostępnij go. Zbieraj dane.
+        </p>
+        <form onSubmit={handleSubmit} className="mb-4">
+          <div className="form-control mb-4">
+            <textarea
+              rows={5}
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Opisz, jakiego formularza potrzebujesz"
+              className="input input-bordered w-full"
+            />
+          </div>
+          <button
+            type="submit"
+            className={`btn btn-primary w-full ${loading ? "loading" : ""}`}
+            disabled={loading || isEdited !== null}
+          >
+            {loading ? "Generuje..." : "Wygeneruj mój formularz"}
+          </button>
+          {/*       <button
+            type="button"
+            className={`btn btn-secondary ${loading ? "loading" : ""}`}
+            disabled={loading || isEdited !== null}
+            onClick={handleSaveForm}
+          >
+            {loading ? "Saving..." : "Save"}
+          </button> */}
         </form>
-      )}
+        {msg && <p className="text-red-500">{msg}</p>}
+        {form && (
+          <Form
+            fields={form.fields}
+            isEdited={isEdited}
+            onFieldChange={handleFieldChange}
+            onStartEditing={startEditing}
+            onSaveField={saveField}
+          />
+        )}
+      </div>
     </div>
   );
 };
