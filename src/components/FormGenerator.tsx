@@ -25,9 +25,17 @@ export const FormGenerator: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isEdited, setIsEdited] = useState<number | null>(null);
 
+  const [formName, setFormName] = useState<string>("");
+  const [formDescription, setFormDescription] = useState<string>("");
+
   const handleSaveForm = async () => {
     if (!form) {
       setMsg("Nie ma formularza do zapisania.");
+      return;
+    }
+
+    if (!formName.trim()) {
+      setMsg("Proszę podać nazwę formularza.");
       return;
     }
 
@@ -43,11 +51,12 @@ export const FormGenerator: React.FC = () => {
 
       const savedForm = await saveForm({
         userId: user.id,
-        name: "Wygenerowany Formularz",
-        description: "Dynamically generated form",
+        name: formName,
+        description: formDescription,
         fields: form.fields,
       });
       console.log("Formularz zapisany pomyślnie", savedForm);
+      setMsg("Formularz zapisany pomyślnie.");
     } catch (err) {
       setMsg("Nie udało się zapisać formularza. Spróbuj ponownie.");
     } finally {
@@ -95,7 +104,7 @@ export const FormGenerator: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-svh">
+    <div className="flex items-center justify-center min-h-screen">
       <div className="container flex flex-col justify-center p-4 max-w-md">
         <h1 className="text-2xl font-bold mb-4 text-center">
           Generuj formularz za pomocą AI
@@ -120,16 +129,44 @@ export const FormGenerator: React.FC = () => {
           >
             {loading ? "Generuje..." : "Wygeneruj mój formularz"}
           </button>
-          {/*       <button
-            type="button"
-            className={`btn btn-secondary ${loading ? "loading" : ""}`}
-            disabled={loading || isEdited !== null}
-            onClick={handleSaveForm}
-          >
-            {loading ? "Saving..." : "Save"}
-          </button> */}
         </form>
-        {msg && <p className="text-red-500">{msg}</p>}
+        {form && (
+          <>
+            <div className="form-control mb-4">
+              <label className="label">
+                <span className="label-text">Nazwa formularza</span>
+              </label>
+              <input
+                type="text"
+                value={formName}
+                onChange={(e) => setFormName(e.target.value)}
+                placeholder="Podaj nazwę formularza"
+                className="input input-bordered w-full"
+              />
+            </div>
+            <div className="form-control mb-4">
+              <label className="label">
+                <span className="label-text">Opis formularza</span>
+              </label>
+              <textarea
+                rows={3}
+                value={formDescription}
+                onChange={(e) => setFormDescription(e.target.value)}
+                placeholder="Podaj krótki opis formularza"
+                className="textarea textarea-bordered w-full"
+              />
+            </div>
+            <button
+              type="button"
+              className={`btn btn-secondary w-full ${loading ? "loading" : ""}`}
+              disabled={loading || isEdited !== null}
+              onClick={handleSaveForm}
+            >
+              {loading ? "Zapisywanie..." : "Zapisz formularz"}
+            </button>
+          </>
+        )}
+        {msg && <p className=" mt-4">{msg}</p>}
         {form && (
           <Form
             fields={form.fields}

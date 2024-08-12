@@ -33,10 +33,11 @@ export const Dashboard: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className="pt-16">
       <RedirectButton href="/">Back</RedirectButton>
       <h1>Dashboard</h1>
       <ul>
+        {data && data.length === 0 && <li>No forms found</li>}
         {data &&
           data.map((form: Form) => (
             <li key={form.id}>
