@@ -33,6 +33,6 @@ model FormField {
   label     String
   placeholder String?
   required  Boolean
-    options     String[] @default([])
-  form      Form     @relation(fields: [formId], references: [id])
+  options     String[] @default([])
+  form        Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
 }

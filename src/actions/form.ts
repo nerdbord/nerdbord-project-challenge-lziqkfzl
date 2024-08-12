@@ -114,3 +114,24 @@ export async function getUserForms() {
     return error;
   }
 }
+
+export const deleteForm = async (id: string) => {
+  try {
+    await prisma.formField.deleteMany({
+      where: {
+        formId: id,
+      },
+    });
+
+    const form = await prisma.form.delete({
+      where: {
+        id,
+      },
+    });
+
+    return form;
+  } catch (error) {
+    console.error("Error deleting form:", error);
+    return;
+  }
+};

@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { getUserForms } from "@/actions/form";
+import { getUserForms, deleteForm } from "@/actions/form";
 import useSWR from "swr";
 import { RedirectButton } from "./RedirectButton";
 
@@ -22,7 +22,17 @@ export const Dashboard: React.FC = () => {
     }
   };
 
-  const { data, error } = useSWR<Form[], Error>("forms", fetcher);
+  const { data, error, mutate } = useSWR<Form[], Error>("forms", fetcher);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteForm(id);
+      mutate();
+    } catch (error) {
+      console.error("Error deleting form:", error);
+      return;
+    }
+  };
 
   if (!data && !error) {
     return <div>Loading...</div>;
@@ -43,6 +53,7 @@ export const Dashboard: React.FC = () => {
             <li key={form.id}>
               <h2>{form.name}</h2>
               <p>{form.description ?? "No description provided"}</p>
+              <button onClick={() => handleDelete(form.id)}>Delete</button>
             </li>
           ))}
       </ul>
