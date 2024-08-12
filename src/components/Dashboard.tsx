@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { getUserForms, deleteForm } from "@/actions/form";
 import useSWR from "swr";
 import { RedirectButton } from "./RedirectButton";
+import Link from "next/link";
 
 interface Form {
   id: string;
@@ -52,16 +53,25 @@ export const Dashboard: React.FC = () => {
     <div className="pt-16">
       <RedirectButton href="/">Back</RedirectButton>
       <h1>Dashboard</h1>
-      {msg && <p>{msg}</p>}
+      {msg && <p className="text-pink-600">{msg}</p>}
       <ul>
         {data && data.length === 0 && <li>No forms found</li>}
         {data &&
           data.map((form: Form) => (
-            <li key={form.id}>
-              <h2>{form.name}</h2>
-              <p>{form.description ?? "No description provided"}</p>
-              <button onClick={() => handleDelete(form.id)}>Delete</button>
-            </li>
+            <Link href={`/${form.id}`} key={form.id}>
+              <li key={form.id}>
+                <h2>{form.name}</h2>
+                <p>{form.description ?? "No description provided"}</p>
+                <button
+                  onClick={(event) => {
+                    event.preventDefault();
+                    handleDelete(form.id);
+                  }}
+                >
+                  Delete
+                </button>
+              </li>
+            </Link>
           ))}
       </ul>
     </div>

@@ -140,3 +140,21 @@ export const deleteForm = async (id: string) => {
     return;
   }
 };
+
+export const getFormById = async (id: string) => {
+  try {
+    const form = await prisma.form.findUnique({
+      where: { id },
+      include: {
+        fields: true,
+      },
+    });
+    if (!form) {
+      throw new Error("Form not found");
+    }
+    return form;
+  } catch (error) {
+    console.error("Error fetching form by ID:", error);
+    throw error;
+  }
+};

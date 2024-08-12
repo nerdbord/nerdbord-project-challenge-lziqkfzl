@@ -24,7 +24,6 @@ export const FormGenerator: React.FC = () => {
   const [msg, setMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [isEdited, setIsEdited] = useState<number | null>(null);
-
   const [formName, setFormName] = useState<string>("");
   const [formDescription, setFormDescription] = useState<string>("");
 
