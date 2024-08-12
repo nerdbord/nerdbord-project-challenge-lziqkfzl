@@ -8,7 +8,7 @@ interface Form {
   id: string;
   name: string;
   description?: string | null;
-  createdAt: string;
+  createdAt: Date;
 }
 
 export const Dashboard: React.FC = () => {
@@ -42,7 +42,6 @@ export const Dashboard: React.FC = () => {
             <li key={form.id}>
               <h2>{form.name}</h2>
               <p>{form.description ?? "No description provided"}</p>
-              <p>Created at: {new Date(form.createdAt).toISOString()}</p>
             </li>
           ))}
       </ul>

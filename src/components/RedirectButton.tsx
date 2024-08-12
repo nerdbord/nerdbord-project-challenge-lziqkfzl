@@ -11,7 +11,7 @@ export const RedirectButton: React.FC<RedirectButtonProps> = ({
 }) => {
   return (
     <Link href={href}>
-      <button className="btn btn-primary">{children}</button>
+      <button>{children}</button>
     </Link>
   );
 };
