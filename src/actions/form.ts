@@ -45,9 +45,7 @@ export const generateForm = async (prompt: string) => {
 
 export const saveForm = async (data: any) => {
   const saveFormSchema = z.object({
-    userId: z.string(),
-    name: z.string(),
-    description: z.string().optional(),
+    id: z.string().optional(),
     fields: z.array(
       z.object({
         name: z.string(),
@@ -63,35 +61,24 @@ export const saveForm = async (data: any) => {
   const parsedData = saveFormSchema.safeParse(data);
 
   if (!parsedData.success) {
+    console.error(parsedData.error);
     throw new Error("Invalid form data");
   }
 
-  const { userId, name, description, fields } = parsedData.data;
+  const { id, fields } = parsedData.data;
 
-  const form = await prisma.form.create({
+  const form = await prisma.form.update({
+    where: { id },
     data: {
-      name,
-      description,
-      userId,
-      fields: {
-        create: fields.map((field) => ({
-          name: field.name,
-          type: field.type,
-          label: field.label,
-          placeholder: field.placeholder,
-          required: field.required ?? false,
-          options: field.options ?? [],
-        })),
-      },
-    },
-    include: {
-      fields: true,
+      fields: fields.map((field) => ({
+        ...field,
+        required: field.required || false,
+      })),
     },
   });
 
   return form;
 };
-
 export async function getUserForms() {
   try {
     const user = await checkUserInDatabase();
@@ -105,16 +92,15 @@ export async function getUserForms() {
     });
 
     if (!forms || forms.length === 0) {
-      return "No expenses found for the user.";
+      return "No forms found for the user.";
     }
 
     return forms;
   } catch (error) {
-    console.error("Failed to load expenses:", error);
+    console.error("Failed to load forms:", error);
     return error;
   }
 }
-
 export const deleteForm = async (id: string) => {
   if (!id) {
     console.error("No form ID provided");
@@ -122,12 +108,6 @@ export const deleteForm = async (id: string) => {
   }
 
   try {
-    await prisma.formField.deleteMany({
-      where: {
-        formId: id,
-      },
-    });
-
     const form = await prisma.form.delete({
       where: {
         id,
@@ -145,16 +125,41 @@ export const getFormById = async (id: string) => {
   try {
     const form = await prisma.form.findUnique({
       where: { id },
-      include: {
-        fields: true,
-      },
     });
     if (!form) {
-      throw new Error("Form not found");
+      console.error("Form not found");
+      return;
     }
     return form;
   } catch (error) {
     console.error("Error fetching form by ID:", error);
     throw error;
   }
+};
+
+export const saveSubmittedForm = async (data: any) => {
+  const saveFormSchema = z.object({
+    formId: z.string(),
+    userId: z.string(),
+    fields: z.record(z.string(), z.union([z.string(), z.boolean()])),
+  });
+
+  const parsedData = saveFormSchema.safeParse(data);
+
+  if (!parsedData.success) {
+    console.error(parsedData.error);
+    throw new Error("Invalid form data");
+  }
+
+  const { formId, userId, fields } = parsedData.data;
+
+  const form = await prisma.submitedForm.create({
+    data: {
+      formId,
+      userId,
+      fields,
+    },
+  });
+
+  return form;
 };

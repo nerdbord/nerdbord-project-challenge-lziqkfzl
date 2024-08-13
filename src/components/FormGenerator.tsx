@@ -54,7 +54,6 @@ export const FormGenerator: React.FC = () => {
         description: formDescription || "Wygenerowany przez AI",
         fields: form.fields,
       });
-      console.log("Formularz zapisany pomyślnie", savedForm);
       setMsg("Formularz zapisany pomyślnie.");
     } catch (err) {
       setMsg("Nie udało się zapisać formularza. Spróbuj ponownie.");
@@ -103,7 +102,7 @@ export const FormGenerator: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-center justify-center min-h-screen pt-40">
       <div className="container flex flex-col justify-center p-4 max-w-lg">
         <h1 className="text-center text-3xl not-italic font-semibold leading-10">
           Generuj formularz za pomocą AI

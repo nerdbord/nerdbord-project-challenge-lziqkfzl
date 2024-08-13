@@ -13,7 +13,7 @@ type FormField = {
 
 type FormComponentProps = {
   fields: FormField[];
-  isEdited: number | null;
+  isEdited?: number | null;
   onFieldChange: (index: number, field: keyof FormField, value: string) => void;
   onStartEditing: (index: number) => void;
   onSaveField: () => void;
@@ -73,7 +73,11 @@ export const Form: React.FC<FormComponentProps> = ({
                   <span className="label-text">Options</span>
                   <input
                     type="text"
-                    value={field.options?.join(", ") || ""}
+                    value={
+                      Array.isArray(field.options)
+                        ? field.options.join(", ")
+                        : ""
+                    }
                     onChange={(e) =>
                       onFieldChange(
                         index,
@@ -81,7 +85,7 @@ export const Form: React.FC<FormComponentProps> = ({
                         e.target.value
                           .split(",")
                           .map((opt) => opt.trim())
-                          .join(",")
+                          .join(", ")
                       )
                     }
                     placeholder="Comma-separated options"

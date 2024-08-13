@@ -1,8 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { getFormById } from "@/actions/form";
+import { getFormById, deleteForm, saveForm } from "@/actions/form";
 import { Form } from "@/components/Form";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 type FormField = {
   name: string;
@@ -14,8 +14,19 @@ type FormField = {
   options?: string[];
 };
 
+const isFormField = (field: any): field is FormField => {
+  return (
+    typeof field === "object" &&
+    field !== null &&
+    typeof field.name === "string" &&
+    typeof field.type === "string" &&
+    typeof field.label === "string"
+  );
+};
+
 export const FormDetails = () => {
   const params = useParams();
+  const router = useRouter();
   const id = params?.id;
 
   const [formFields, setFormFields] = useState<FormField[]>([]);
@@ -31,15 +42,16 @@ export const FormDetails = () => {
 
       try {
         const form = await getFormById(String(id));
-        if (form && form.fields) {
+        if (form && Array.isArray(form.fields)) {
+          const validFields = form.fields.filter(isFormField);
           setFormFields(
-            form.fields.map((field) => ({
+            validFields.map((field: FormField) => ({
               ...field,
               placeholder: field.placeholder || undefined,
             }))
           );
         } else {
-          setMsg("Form not found or it has no fields.");
+          setMsg("Form not found or it has no valid fields.");
         }
       } catch (error) {
         setMsg("Error fetching form details: " + error);
@@ -70,17 +82,45 @@ export const FormDetails = () => {
     setIsEdited(null);
   };
 
+  const handleDeleteForm = async () => {
+    if (!id) return;
+
+    try {
+      await deleteForm(String(id));
+      setMsg("Form deleted successfully.");
+      router.push("/forms");
+    } catch (error) {
+      setMsg("Error deleting form: " + error);
+    }
+  };
+  const handleSaveForm = async () => {
+    if (!id) return;
+
+    try {
+      await saveForm({
+        id: String(id),
+        fields: formFields,
+      });
+      setMsg("Form saved successfully.");
+    } catch (error) {
+      setMsg("Error saving form: " + error);
+    }
+  };
+
   return (
-    <div className="container mx-auto p-4 pt-16">
+    <div className="container mx-auto p-4 pt-40">
       {msg ? (
         <p className="text-pink-600">{msg}</p>
       ) : (
         <>
           <h1 className="text-2xl font-bold mb-4">Form Details</h1>
-          <div>
-            {/*      dodac funkcjonalnosc */}
-            <button className="btn btn-primary ">Delete</button>
-            <button className="btn btn-secondary">Save</button>
+          <div className="mb-4">
+            <button className="btn btn-primary mr-2" onClick={handleDeleteForm}>
+              Delete
+            </button>
+            <button className="btn btn-secondary" onClick={handleSaveForm}>
+              Save
+            </button>
           </div>
 
           <Form

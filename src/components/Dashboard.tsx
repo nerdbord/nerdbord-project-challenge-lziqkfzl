@@ -19,9 +19,10 @@ export const Dashboard: React.FC = () => {
 
   const fetcher = async (): Promise<Form[]> => {
     try {
-      const forms = (await getUserForms()) as Form[];
+      const forms: Form[] = (await getUserForms()) as Form[];
       if (!forms || forms.length === 0) {
         setMsg("No forms found");
+        return [];
       }
       return forms;
     } catch (error) {
@@ -38,9 +39,20 @@ export const Dashboard: React.FC = () => {
       setMsg("Form deleted successfully");
       mutate();
     } catch (error) {
-      setMsg("Error deleting form" + error);
-      return;
+      setMsg("Error deleting form: " + error);
     }
+  };
+
+  const handleCopyURL = (id: string) => {
+    const url = `${window.location.origin}/forms/preview/${id}`;
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        setMsg("URL copied to clipboard");
+      })
+      .catch(() => {
+        setMsg("Failed to copy URL");
+      });
   };
 
   if (!data && !error) {
@@ -57,37 +69,46 @@ export const Dashboard: React.FC = () => {
 
       {msg && <p className="text-pink-600">{msg}</p>}
       <div className="overflow-x-auto">
-        {data && data.length === 0 && <p>No forms found</p>}
-        {data && data.length > 0 && (
+        {Array.isArray(data) && data.length === 0 && <p>No forms found</p>}
+        {Array.isArray(data) && data.length > 0 && (
           <table className="table table-zebra">
             <thead>
               <tr>
-                <th></th>
-                <th>Nazwa</th>
-                <th>Opis</th>
-                <th>Action</th>
+                <th>#</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {data.map((form: Form, index) => (
-                <tr
-                  key={form.id}
-                  className="hover:cursor-pointer"
-                  onClick={() => router.push(`/${form.id}`)}
-                >
+                <tr key={form.id}>
                   <th>{index + 1}</th>
-
-                  <td>{form.name}</td>
+                  <td
+                    className="hover:cursor-pointer"
+                    onClick={() => router.push(`/forms/${form.id}`)}
+                  >
+                    {form.name}
+                  </td>
                   <td>{form.description}</td>
                   <td>
                     <button
-                      className="btn btn-error"
+                      className="btn btn-error mr-2"
                       onClick={(event) => {
-                        event.preventDefault();
+                        event.stopPropagation();
                         handleDelete(form.id);
                       }}
                     >
                       Delete
+                    </button>
+                    <button
+                      className="btn btn-warning"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleCopyURL(form.id);
+                      }}
+                    >
+                      Copy URL
                     </button>
                   </td>
                 </tr>

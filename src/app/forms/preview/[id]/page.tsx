@@ -1,10 +1,10 @@
 import React from "react";
-import { FormDetails } from "@/components/FormDetails";
+import { FormForShare } from "@/components/FormForShare";
 
 type Props = {};
 
 const page = (props: Props) => {
-  return <FormDetails />;
+  return <FormForShare />;
 };
 
 export default page;

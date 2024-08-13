@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 export async function checkUserInDatabase() {
   try {
     const user = await currentUser();
-    if (!user) return "No user found";
+    if (!user) return null;
     if (user) {
       let existingUser = await prisma.user.findUnique({
         where: { email: user.emailAddresses[0].emailAddress },
