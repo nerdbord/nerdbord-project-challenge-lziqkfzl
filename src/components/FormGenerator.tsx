@@ -51,7 +51,7 @@ export const FormGenerator: React.FC = () => {
       const savedForm = await saveForm({
         userId: user.id,
         name: formName,
-        description: formDescription,
+        description: formDescription || "Wygenerowany przez AI",
         fields: form.fields,
       });
       console.log("Formularz zapisany pomyślnie", savedForm);
@@ -104,11 +104,11 @@ export const FormGenerator: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <div className="container flex flex-col justify-center p-4 max-w-md">
-        <h1 className="text-2xl font-bold mb-4 text-center">
+      <div className="container flex flex-col justify-center p-4 max-w-lg">
+        <h1 className="text-center text-3xl not-italic font-semibold leading-10">
           Generuj formularz za pomocą AI
         </h1>
-        <p className="mb-4 text-center">
+        <p className="text-center text-base not-italic font-semibold leading-6 py-6">
           Stwórz formularz. Udostępnij go. Zbieraj dane.
         </p>
         <form onSubmit={handleSubmit} className="mb-4">
@@ -118,7 +118,7 @@ export const FormGenerator: React.FC = () => {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Opisz, jakiego formularza potrzebujesz"
-              className="input input-bordered w-full"
+              className="input input-bordered w-full h-24 p-4 rounded-lg"
             />
           </div>
           <button

@@ -16,9 +16,9 @@ export const Header = async (props: Props) => {
   console.log(user);
 
   return (
-    <div className="flex justify-between items-center navbar bg-base-100 fixed border-b">
+    <div className="flex justify-between items-center navbar bg-base-100 fixed border-b px-20 py-12">
       <RedirectButton href="/">FormuLator</RedirectButton>
-      <div>
+      <div className="flex gap-6">
         {user ? (
           <>
             <RedirectButton href="/dashboard">Moje formularze</RedirectButton>

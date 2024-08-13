@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { getUserForms, deleteForm } from "@/actions/form";
 import useSWR from "swr";
 import { RedirectButton } from "./RedirectButton";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface Form {
   id: string;
@@ -14,6 +14,8 @@ interface Form {
 
 export const Dashboard: React.FC = () => {
   const [msg, setMsg] = useState<string>("");
+
+  const router = useRouter();
 
   const fetcher = async (): Promise<Form[]> => {
     try {
@@ -50,30 +52,50 @@ export const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="pt-16">
-      <RedirectButton href="/">Back</RedirectButton>
-      <h1>Dashboard</h1>
+    <div className="pt-36 px-20">
+      <RedirectButton href="/">Back to main</RedirectButton>
+
       {msg && <p className="text-pink-600">{msg}</p>}
-      <ul>
-        {data && data.length === 0 && <li>No forms found</li>}
-        {data &&
-          data.map((form: Form) => (
-            <Link href={`/${form.id}`} key={form.id}>
-              <li key={form.id}>
-                <h2>{form.name}</h2>
-                <p>{form.description ?? "No description provided"}</p>
-                <button
-                  onClick={(event) => {
-                    event.preventDefault();
-                    handleDelete(form.id);
-                  }}
+      <div className="overflow-x-auto">
+        {data && data.length === 0 && <p>No forms found</p>}
+        {data && data.length > 0 && (
+          <table className="table table-zebra">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Nazwa</th>
+                <th>Opis</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((form: Form, index) => (
+                <tr
+                  key={form.id}
+                  className="hover:cursor-pointer"
+                  onClick={() => router.push(`/${form.id}`)}
                 >
-                  Delete
-                </button>
-              </li>
-            </Link>
-          ))}
-      </ul>
+                  <th>{index + 1}</th>
+
+                  <td>{form.name}</td>
+                  <td>{form.description}</td>
+                  <td>
+                    <button
+                      className="btn btn-error"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        handleDelete(form.id);
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 };
