@@ -20,3 +20,11 @@ body {
     text-wrap: balance;
   }
 }
+
+.noresize {
+  resize: none !important;
+}
+
+.pink {
+  color: hotpink;
+}

@@ -152,7 +152,7 @@ export const FormGenerator: React.FC = () => {
                 value={formDescription}
                 onChange={(e) => setFormDescription(e.target.value)}
                 placeholder="Podaj krótki opis formularza"
-                className="textarea textarea-bordered w-full"
+                className="textarea textarea-bordered w-full noresize border"
               />
             </div>
             <button
