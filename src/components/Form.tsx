@@ -14,116 +14,85 @@ type FormField = {
 type FormComponentProps = {
   fields: FormField[];
   isEdited: number | null;
-  onFieldChange: (index: number, field: keyof FormField, value: string) => void;
   onStartEditing: (index: number) => void;
-  onSaveField: () => void;
 };
 
 export const Form: React.FC<FormComponentProps> = ({
   fields,
   isEdited,
-  onFieldChange,
   onStartEditing,
-  onSaveField,
 }) => {
   return (
     <form>
       {fields.map((field, index) => (
-        <div key={index} className="mb-4">
-          {isEdited === index ? (
-            <div className="space-y-2">
-              <label className="label">
-                <span className="label-text">Label</span>
-                <input
-                  type="text"
-                  value={field.label}
-                  onChange={(e) =>
-                    onFieldChange(index, "label", e.target.value)
-                  }
-                />
-              </label>
-              <label className="label">
-                <span className="label-text">Placeholder</span>
-                <input
-                  type="text"
-                  value={field.placeholder || ""}
-                  onChange={(e) =>
-                    onFieldChange(index, "placeholder", e.target.value)
-                  }
-                />
-              </label>
-              <label className="label">
-                <span className="label-text">Type</span>
-                <select
-                  value={field.type}
-                  onChange={(e) => onFieldChange(index, "type", e.target.value)}
-                >
-                  <option value="text">Text</option>
-                  <option value="textarea">Textarea</option>
-                  <option value="select">Select</option>
-                  <option value="email">Email</option>
-                  <option value="number">Number</option>
-                  <option value="file">File</option>
-                  <option value="radio">Radio</option>
-                  <option value="checkbox">Checkbox</option>
-                </select>
-              </label>
-              {field.type === "select" && (
-                <label className="label">
-                  <span className="label-text">Options</span>
+        <div key={index} className="mb-4 flex flex-col ">
+          {isEdited === index ? null : (
+            <div className="mb-4 flex  space-x-4 ">
+              {field.type === "radio" || field.type === "checkbox" ? (
+                <label className="flex items-center space-x-2">
                   <input
-                    type="text"
-                    value={field.options?.join(", ") || ""}
-                    onChange={(e) =>
-                      onFieldChange(
-                        index,
-                        "options",
-                        e.target.value
-                          .split(",")
-                          .map((opt) => opt.trim())
-                          .join(",")
-                      )
-                    }
-                    placeholder="Comma-separated options"
+                    type={field.type}
+                    className={`${
+                      field.type === "radio"
+                        ? "radio radio-bordered"
+                        : "checkbox checkbox-bordered"
+                    }`}
                   />
+                  <span className="label-text">{field.label}</span>
                 </label>
-              )}
-              <button
-                type="button"
-                onClick={onSaveField}
-                className="btn btn-success mt-2"
-              >
-                Save
-              </button>
-            </div>
-          ) : (
-            <div>
-              <label className="label">
-                <span className="label-text">{field.label}</span>
-              </label>
-              {field.type === "textarea" ? (
-                <textarea
-                  placeholder={field.placeholder}
-                  className="textarea textarea-bordered w-full"
-                />
-              ) : field.type === "select" ? (
-                <select className="select select-bordered w-full">
-                  {field.options?.map((option, idx) => (
-                    <option key={idx} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
+              ) : field.type === "color" ? (
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="color"
+                    className="w-16 h-10 border-2 border-gray-300 rounded-md"
+                  />
+                  <span className="label-text">{field.label}</span>
+                </label>
               ) : (
-                <input type={field.type} placeholder={field.placeholder} />
+                <div className="flex items-center w-full space-x-4">
+                  <div className="flex-grow">
+                    <label className="label">
+                      <span className="label-text">{field.label}</span>
+                    </label>
+                    {field.type === "textarea" ? (
+                      <textarea
+                        placeholder={field.placeholder}
+                        className="textarea textarea-bordered w-full"
+                      />
+                    ) : field.type === "select" ? (
+                      <select className="select select-bordered w-full">
+                        {field.options?.map((option, idx) => (
+                          <option key={idx} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type={field.type}
+                        placeholder={field.placeholder}
+                        className={`${
+                          field.type === "text" ||
+                          field.type === "email" ||
+                          field.type === "password" ||
+                          field.type === "number"
+                            ? "input input-bordered w-full"
+                            : field.type === "file"
+                            ? "file-input file-input-bordered w-full"
+                            : "input input-bordered w-full"
+                        }`}
+                      />
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => onStartEditing(index)}
+                    className="btn self-end"
+                  >
+                    Edytuj
+                  </button>
+                </div>
               )}
-              <button
-                type="button"
-                onClick={() => onStartEditing(index)}
-                className="btn btn-info mt-2"
-              >
-                Edit
-              </button>
             </div>
           )}
         </div>

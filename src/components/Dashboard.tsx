@@ -2,8 +2,11 @@
 import React, { useState } from "react";
 import { getUserForms, deleteForm } from "@/actions/form";
 import useSWR from "swr";
-import { RedirectButton } from "./RedirectButton";
 import { useRouter } from "next/navigation";
+import { PiTrashSimple } from "react-icons/pi";
+import { BiPencil } from "react-icons/bi";
+import Image from "next/image";
+import formImg from "../assets/form.png";
 
 interface Form {
   id: string;
@@ -21,11 +24,11 @@ export const Dashboard: React.FC = () => {
     try {
       const forms = (await getUserForms()) as Form[];
       if (!forms || forms.length === 0) {
-        setMsg("No forms found");
+        setMsg("Brak formularzy");
       }
       return forms;
     } catch (error) {
-      setMsg("Error fetching forms: " + error);
+      setMsg("Błąd podczas pobierania formularzy: " + error);
       throw error;
     }
   };
@@ -35,10 +38,10 @@ export const Dashboard: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteForm(id);
-      setMsg("Form deleted successfully");
+      setMsg("Formularz usunięty");
       mutate();
     } catch (error) {
-      setMsg("Error deleting form" + error);
+      setMsg("Wystąpił bład podczas usuwania formularza: " + error);
       return;
     }
   };
@@ -52,49 +55,42 @@ export const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="pt-36 px-20">
-      <RedirectButton href="/">Back to main</RedirectButton>
-
+    <div className="pt-36 px-20 flex justify-center ">
       {msg && <p className="text-pink-600">{msg}</p>}
-      <div className="overflow-x-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {data && data.length === 0 && <p>No forms found</p>}
-        {data && data.length > 0 && (
-          <table className="table table-zebra">
-            <thead>
-              <tr>
-                <th></th>
-                <th>Nazwa</th>
-                <th>Opis</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((form: Form, index) => (
-                <tr
-                  key={form.id}
-                  className="hover:cursor-pointer"
-                  onClick={() => router.push(`/${form.id}`)}
-                >
-                  <th>{index + 1}</th>
-
-                  <td>{form.name}</td>
-                  <td>{form.description}</td>
-                  <td>
-                    <button
-                      className="btn btn-error"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        handleDelete(form.id);
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+        {data &&
+          data.length > 0 &&
+          data.map((form: Form) => (
+            <div
+              key={form.id}
+              className="card card-side bg-base-100 shadow-xl w-96"
+            >
+              <div className="card-body w-2/3">
+                <h2 className="card-title">{form.name}</h2>
+                <p>{form.description}</p>
+                <div className="card-actions justify-end mt-8">
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => router.push(`/forms/${form.id}`)}
+                  >
+                    Edytuj
+                    <BiPencil className="w-4 h-4" />
+                  </button>
+                  <button
+                    className="btn btn-error"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleDelete(form.id);
+                    }}
+                  >
+                    Usuń
+                    <PiTrashSimple className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
       </div>
     </div>
   );
