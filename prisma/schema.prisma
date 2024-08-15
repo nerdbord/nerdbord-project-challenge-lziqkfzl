@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -20,19 +19,16 @@ model Form {
   name        String
   description String?
   createdAt   DateTime     @default(now())
-  fields      FormField[]
+  fields      Json
   userId      String
   user        User         @relation("UserForms", fields: [userId], references: [id])
 }
 
-model FormField {
+
+model SubmitedForm {
   id        String   @id @default(cuid())
   formId    String
-  name      String
-  type      String
-  label     String
-  placeholder String?
-  required  Boolean
-  options     String[] @default([])
-  form        Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  userId    String
+  fields    Json
+  createdAt DateTime @default(now())
 }

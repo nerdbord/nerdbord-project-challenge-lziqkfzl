@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { checkUserInDatabase } from "@/actions/user";
 import { generateForm, saveForm } from "@/actions/form";
 import { Form } from "@/components/Form";
+import { useRouter } from "next/navigation";
 
 type FormField = {
   name: string;
@@ -26,6 +27,8 @@ export const FormGenerator: React.FC = () => {
   const [isEdited, setIsEdited] = useState<number | null>(null);
   const [formName, setFormName] = useState<string>("");
   const [formDescription, setFormDescription] = useState<string>("");
+
+  const router = useRouter();
 
   const handleSaveForm = async () => {
     if (!form) {
@@ -54,8 +57,11 @@ export const FormGenerator: React.FC = () => {
         description: formDescription || "Wygenerowany przez AI",
         fields: form.fields,
       });
-      console.log("Formularz zapisany pomyślnie", savedForm);
-      setMsg("Formularz zapisany pomyślnie.");
+
+      setMsg("Formularz zapisany pomyślnie. Przekierowywanie do formularzy...");
+      setTimeout(() => {
+        router.push("/forms");
+      }, 2000);
     } catch (err) {
       setMsg("Nie udało się zapisać formularza. Spróbuj ponownie.");
     } finally {
@@ -72,7 +78,7 @@ export const FormGenerator: React.FC = () => {
       const generatedForm = await generateForm(prompt);
       setForm(generatedForm);
     } catch (err) {
-      setMsg("Nie udało się wygenerować formularza. Spróbuj ponownie.");
+      setMsg(`Nie udało się wygenerować formularza - ${err}`);
     } finally {
       setLoading(false);
     }
@@ -102,78 +108,155 @@ export const FormGenerator: React.FC = () => {
     setIsEdited(null);
   };
 
+  const handleReset = () => {
+    setForm(null);
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <div className="container flex flex-col justify-center p-4 max-w-lg">
-        <h1 className="text-center text-3xl not-italic font-semibold leading-10">
-          Generuj formularz za pomocą AI
-        </h1>
-        <p className="text-center text-base not-italic font-semibold leading-6 py-6">
-          Stwórz formularz. Udostępnij go. Zbieraj dane.
-        </p>
-        <form onSubmit={handleSubmit} className="mb-4">
-          <div className="form-control mb-4">
-            <textarea
-              rows={5}
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Opisz, jakiego formularza potrzebujesz"
-              className="input input-bordered w-full h-24 p-4 rounded-lg"
-            />
-          </div>
-          <button
-            type="submit"
-            className={`btn btn-primary w-full ${loading ? "loading" : ""}`}
-            disabled={loading || isEdited !== null}
-          >
-            {loading ? "Generuje..." : "Wygeneruj mój formularz"}
-          </button>
-        </form>
-        {form && (
-          <>
-            <div className="form-control mb-4">
-              <label className="label">
-                <span className="label-text">Nazwa formularza</span>
-              </label>
+      <div className="container flex flex-col  justify-center p-4 max-w-lg ">
+        {form ? (
+          <div className="flex flex-col gap-y-3 border p-8 rounded-2xl mt-28">
+            <div className="form-control mb-4  ">
               <input
                 type="text"
                 value={formName}
                 onChange={(e) => setFormName(e.target.value)}
-                placeholder="Podaj nazwę formularza"
+                placeholder="Wpisz nazwę formularza"
                 className="input input-bordered w-full"
               />
             </div>
             <div className="form-control mb-4">
-              <label className="label">
-                <span className="label-text">Opis formularza</span>
-              </label>
               <textarea
                 rows={3}
                 value={formDescription}
                 onChange={(e) => setFormDescription(e.target.value)}
-                placeholder="Podaj krótki opis formularza"
+                placeholder="Wpisz krótki opis formularza"
                 className="textarea textarea-bordered w-full noresize border"
               />
             </div>
+
+            {isEdited !== null ? (
+              <div className="flex flex-col gap-y-3">
+                <label className="label-text mb-2">
+                  Label
+                  <input
+                    type="text"
+                    value={form?.fields[isEdited].label || ""}
+                    onChange={(e) =>
+                      handleFieldChange(isEdited, "label", e.target.value)
+                    }
+                    className="input input-bordered w-full mt-2"
+                  />
+                </label>
+                <label className="label-text mb-2">
+                  Placeholder
+                  <input
+                    type="text"
+                    value={form?.fields[isEdited].placeholder || ""}
+                    onChange={(e) =>
+                      handleFieldChange(isEdited, "placeholder", e.target.value)
+                    }
+                    className="input input-bordered w-full mt-2"
+                  />
+                </label>
+                <label className="label-text mb-2">
+                  Rodzaj pola
+                  <select
+                    value={form?.fields[isEdited].type || "text"}
+                    onChange={(e) =>
+                      handleFieldChange(isEdited, "type", e.target.value)
+                    }
+                    className="select select-bordered w-full mt-2"
+                  >
+                    <option value="text">Text</option>
+                    <option value="textarea">Textarea</option>
+                    <option value="select">Select</option>
+                    <option value="email">Email</option>
+                    <option value="number">Number</option>
+                    <option value="file">File</option>
+                    <option value="radio">Radio</option>
+                    <option value="checkbox">Checkbox</option>
+                  </select>
+                </label>
+                {form?.fields[isEdited].type === "select" && (
+                  <label className="label">
+                    <span className="label-text">Typ formularza</span>
+                    <input
+                      type="text"
+                      value={form?.fields[isEdited].options?.join(", ") || ""}
+                      onChange={(e) =>
+                        handleFieldChange(
+                          isEdited,
+                          "options",
+                          e.target.value
+                            .split(",")
+                            .map((opt) => opt.trim())
+                            .join(",")
+                        )
+                      }
+                      placeholder="Opcje oddzielone przecinkami"
+                    />
+                  </label>
+                )}
+                <button
+                  type="button"
+                  onClick={saveField}
+                  className="btn btn-success mt-2"
+                >
+                  Zapisz
+                </button>
+              </div>
+            ) : (
+              <Form
+                fields={form.fields}
+                isEdited={isEdited}
+                onStartEditing={startEditing}
+              />
+            )}
+            {msg && <p className=" text-center text-pink-500">{msg}</p>}
             <button
               type="button"
-              className={`btn btn-secondary w-full ${loading ? "loading" : ""}`}
+              className={`btn btn-secondary w-full `}
               disabled={loading || isEdited !== null}
               onClick={handleSaveForm}
             >
               {loading ? "Zapisywanie..." : "Zapisz formularz"}
             </button>
-          </>
-        )}
-        {msg && <p className=" mt-4">{msg}</p>}
-        {form && (
-          <Form
-            fields={form.fields}
-            isEdited={isEdited}
-            onFieldChange={handleFieldChange}
-            onStartEditing={startEditing}
-            onSaveField={saveField}
-          />
+            <button
+              type="button"
+              className={`btn btn-primary w-full `}
+              disabled={loading || isEdited !== null}
+              onClick={handleReset}
+            >
+              Generuj nowy formularz
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="mb-4">
+            <h1 className="text-center text-3xl not-italic font-semibold leading-10">
+              Generuj formularz za pomocą AI
+            </h1>
+            <p className="text-center text-base not-italic font-semibold leading-6 py-6">
+              Stwórz formularz. Udostępnij go. Zbieraj dane.
+            </p>
+            <div className="form-control mb-4">
+              <textarea
+                rows={5}
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="Opisz, jakiego formularza potrzebujesz"
+                className="input input-bordered w-full h-24 p-4 rounded-lg"
+              />
+            </div>
+            <button
+              type="submit"
+              className={`btn btn-primary w-full`}
+              disabled={loading || isEdited !== null}
+            >
+              {loading ? "Generuje..." : "Wygeneruj mój formularz"}
+            </button>
+          </form>
         )}
       </div>
     </div>

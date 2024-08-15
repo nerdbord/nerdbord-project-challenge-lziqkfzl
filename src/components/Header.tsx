@@ -13,16 +13,17 @@ type Props = {};
 
 export const Header = async (props: Props) => {
   const user = await currentUser();
-  console.log(user);
 
   return (
-    <div className="flex justify-between items-center navbar bg-base-100 fixed border-b px-20 py-12">
+    <div className="flex justify-between items-center navbar bg-base-100 fixed  px-20 py-12">
       <RedirectButton href="/">FormuLator</RedirectButton>
       <div className="flex gap-6">
         {user ? (
           <>
-            <RedirectButton href="/dashboard">Moje formularze</RedirectButton>
-            <UserButton />
+            <RedirectButton href="/forms">Moje formularze</RedirectButton>
+            <UserButton>
+              <button className="p-4"></button>
+            </UserButton>
           </>
         ) : (
           <>
