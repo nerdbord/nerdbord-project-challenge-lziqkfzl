@@ -116,14 +116,14 @@ export const FormGenerator: React.FC = () => {
     <div className="flex items-center justify-center min-h-screen">
       <div className="container flex flex-col justify-center p-4 max-w-lg">
         {form ? (
-          <div className="flex flex-col gap-y-3 border p-8 rounded-2xl mt-28">
+          <div className="flex flex-col gap-y-3 border bg-white p-8 rounded-2xl mt-28">
             <div className="form-control mb-4">
               <input
                 type="text"
                 value={formName}
                 onChange={(e) => setFormName(e.target.value)}
                 placeholder="Wpisz nazwę formularza"
-                className="input input-bordered w-full"
+                className="input input-bordered w-full bg-inherit"
               />
             </div>
             <div className="form-control mb-4">
@@ -132,7 +132,7 @@ export const FormGenerator: React.FC = () => {
                 value={formDescription}
                 onChange={(e) => setFormDescription(e.target.value)}
                 placeholder="Wygenerowany przez AI"
-                className="textarea textarea-bordered w-full noresize border"
+                className="textarea textarea-bordered w-full noresize border  bg-inherit"
               />
             </div>
 
@@ -154,7 +154,7 @@ export const FormGenerator: React.FC = () => {
             {msg && <p className="text-center text-pink-500">{msg}</p>}
             <button
               type="button"
-              className={`btn btn-secondary w-full`}
+              className={`btn btn-accent w-full`}
               disabled={loading || isEdited !== null}
               onClick={handleSaveForm}
             >
@@ -162,7 +162,7 @@ export const FormGenerator: React.FC = () => {
             </button>
             <button
               type="button"
-              className={`btn btn-primary w-full`}
+              className="btn  w-full "
               disabled={loading || isEdited !== null}
               onClick={handleReset}
             >
@@ -183,12 +183,12 @@ export const FormGenerator: React.FC = () => {
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder="Opisz, jakiego formularza potrzebujesz"
-                className="input input-bordered w-full h-24 p-4 rounded-lg"
+                className="input input-bordered w-full h-24 p-4 rounded-lg bg-white"
               />
             </div>
             <button
               type="submit"
-              className={`btn btn-primary w-full`}
+              className={`btn btn-accent w-full`}
               disabled={loading || isEdited !== null}
             >
               {loading ? "Generuje..." : "Wygeneruj mój formularz"}

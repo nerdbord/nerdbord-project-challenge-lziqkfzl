@@ -75,10 +75,10 @@ export const Form: React.FC<FormComponentProps> = ({
                     {field.type === "textarea" ? (
                       <textarea
                         placeholder={field.placeholder}
-                        className="textarea textarea-bordered w-full"
+                        className="textarea textarea-bordered w-full bg-inherit"
                       />
                     ) : field.type === "select" ? (
-                      <select className="select select-bordered w-full">
+                      <select className="select select-bordered w-full  bg-inherit">
                         {field.options?.map((option, idx) => (
                           <option key={idx} value={option}>
                             {option}
@@ -94,10 +94,10 @@ export const Form: React.FC<FormComponentProps> = ({
                           field.type === "email" ||
                           field.type === "password" ||
                           field.type === "number"
-                            ? "input input-bordered w-full"
+                            ? "input input-bordered w-full  bg-inherit"
                             : field.type === "file"
-                            ? "file-input file-input-bordered w-full"
-                            : "input input-bordered w-full"
+                            ? "file-input file-input-bordered w-full bg-inherit"
+                            : "input input-bordered w-full bg-inherit"
                         }`}
                       />
                     )}
@@ -105,7 +105,7 @@ export const Form: React.FC<FormComponentProps> = ({
                   <button
                     type="button"
                     onClick={() => onStartEditing(index)}
-                    className="btn self-end"
+                    className="btn btn-ghost self-end"
                   >
                     Edytuj
                   </button>
