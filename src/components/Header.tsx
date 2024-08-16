@@ -10,21 +10,23 @@ export const Header = async (props: Props) => {
   const user = await currentUser();
 
   return (
-    <div className="flex justify-between items-center navbar bg-base-100 fixed  px-20 py-12">
-      <RedirectButton href="/">FormuLator</RedirectButton>
+    <div className="flex justify-between items-center navbar fixed bg-white shadow-md  px-20 h-20">
+      <RedirectButton className="btn btn-ghost" href="/">
+        FormuLator
+      </RedirectButton>
       <div className="flex gap-6">
         {user ? (
-          <>
+          <div className="flex gap-20">
             <HeaderButtons />
             <UserButton />
-          </>
+          </div>
         ) : (
           <>
             <SignInButton>
-              <button>Logowanie</button>
+              <button className="btn btn-ghost">Logowanie</button>
             </SignInButton>
             <SignUpButton>
-              <button>Załóż konto</button>
+              <button className="btn btn-accent">Załóż konto</button>
             </SignUpButton>
           </>
         )}

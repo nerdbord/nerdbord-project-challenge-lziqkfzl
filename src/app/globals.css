@@ -10,21 +10,20 @@
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: inherit;
+body,
+html {
+  color: #374151;
+  background: linear-gradient(
+    141deg,
+    #ccfbf1 9.62%,
+    #f3f4f6 30.52%,
+    #f3f4f6 72.32%,
+    #ccfbf1 93.21%
+  );
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
-}
-
-.noresize {
-  resize: none !important;
-}
-
-.pink {
-  color: hotpink;
 }

@@ -12,7 +12,11 @@ const page = async (props: Props) => {
     redirect("/");
   }
 
-  return <Dashboard />;
+  return (
+    <div className="h-full">
+      <Dashboard />;
+    </div>
+  );
 };
 
 export default page;
