@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { checkUserInDatabase } from "@/actions/user";
 import { generateForm, saveForm } from "@/actions/form";
 import { Form } from "@/components/Form";
+import { FormFieldEditor } from "@/components/FormFieldEditor";
 import { useRouter } from "next/navigation";
 
 type FormField = {
@@ -84,27 +85,26 @@ export const FormGenerator: React.FC = () => {
     }
   };
 
-  const handleFieldChange = (
-    index: number,
-    field: keyof FormField,
-    value: string
-  ) => {
+  const handleFieldChange = (index: number, updatedField: FormField) => {
     if (!form) return;
 
     const updatedFields = [...form.fields];
-    updatedFields[index] = {
-      ...updatedFields[index],
-      [field]: value,
-    };
+    updatedFields[index] = updatedField;
 
     setForm({ ...form, fields: updatedFields });
+    setIsEdited(null);
   };
 
   const startEditing = (index: number) => {
     setIsEdited(index);
   };
 
-  const saveField = () => {
+  const deleteField = (index: number) => {
+    if (!form) return;
+
+    const updatedFields = form.fields.filter((_, i) => i !== index);
+
+    setForm({ ...form, fields: updatedFields });
     setIsEdited(null);
   };
 
@@ -114,10 +114,10 @@ export const FormGenerator: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <div className="container flex flex-col  justify-center p-4 max-w-lg ">
+      <div className="container flex flex-col justify-center p-4 max-w-lg">
         {form ? (
           <div className="flex flex-col gap-y-3 border p-8 rounded-2xl mt-28">
-            <div className="form-control mb-4  ">
+            <div className="form-control mb-4">
               <input
                 type="text"
                 value={formName}
@@ -131,82 +131,19 @@ export const FormGenerator: React.FC = () => {
                 rows={3}
                 value={formDescription}
                 onChange={(e) => setFormDescription(e.target.value)}
-                placeholder="Wpisz krótki opis formularza"
+                placeholder="Wygenerowany przez AI"
                 className="textarea textarea-bordered w-full noresize border"
               />
             </div>
 
             {isEdited !== null ? (
-              <div className="flex flex-col gap-y-3">
-                <label className="label-text mb-2">
-                  Label
-                  <input
-                    type="text"
-                    value={form?.fields[isEdited].label || ""}
-                    onChange={(e) =>
-                      handleFieldChange(isEdited, "label", e.target.value)
-                    }
-                    className="input input-bordered w-full mt-2"
-                  />
-                </label>
-                <label className="label-text mb-2">
-                  Placeholder
-                  <input
-                    type="text"
-                    value={form?.fields[isEdited].placeholder || ""}
-                    onChange={(e) =>
-                      handleFieldChange(isEdited, "placeholder", e.target.value)
-                    }
-                    className="input input-bordered w-full mt-2"
-                  />
-                </label>
-                <label className="label-text mb-2">
-                  Rodzaj pola
-                  <select
-                    value={form?.fields[isEdited].type || "text"}
-                    onChange={(e) =>
-                      handleFieldChange(isEdited, "type", e.target.value)
-                    }
-                    className="select select-bordered w-full mt-2"
-                  >
-                    <option value="text">Text</option>
-                    <option value="textarea">Textarea</option>
-                    <option value="select">Select</option>
-                    <option value="email">Email</option>
-                    <option value="number">Number</option>
-                    <option value="file">File</option>
-                    <option value="radio">Radio</option>
-                    <option value="checkbox">Checkbox</option>
-                  </select>
-                </label>
-                {form?.fields[isEdited].type === "select" && (
-                  <label className="label">
-                    <span className="label-text">Typ formularza</span>
-                    <input
-                      type="text"
-                      value={form?.fields[isEdited].options?.join(", ") || ""}
-                      onChange={(e) =>
-                        handleFieldChange(
-                          isEdited,
-                          "options",
-                          e.target.value
-                            .split(",")
-                            .map((opt) => opt.trim())
-                            .join(",")
-                        )
-                      }
-                      placeholder="Opcje oddzielone przecinkami"
-                    />
-                  </label>
-                )}
-                <button
-                  type="button"
-                  onClick={saveField}
-                  className="btn btn-success mt-2"
-                >
-                  Zapisz
-                </button>
-              </div>
+              <FormFieldEditor
+                field={form.fields[isEdited]}
+                onSave={(updatedField) =>
+                  handleFieldChange(isEdited, updatedField)
+                }
+                onDelete={() => deleteField(isEdited)}
+              />
             ) : (
               <Form
                 fields={form.fields}
@@ -214,10 +151,10 @@ export const FormGenerator: React.FC = () => {
                 onStartEditing={startEditing}
               />
             )}
-            {msg && <p className=" text-center text-pink-500">{msg}</p>}
+            {msg && <p className="text-center text-pink-500">{msg}</p>}
             <button
               type="button"
-              className={`btn btn-secondary w-full `}
+              className={`btn btn-secondary w-full`}
               disabled={loading || isEdited !== null}
               onClick={handleSaveForm}
             >
@@ -225,7 +162,7 @@ export const FormGenerator: React.FC = () => {
             </button>
             <button
               type="button"
-              className={`btn btn-primary w-full `}
+              className={`btn btn-primary w-full`}
               disabled={loading || isEdited !== null}
               onClick={handleReset}
             >

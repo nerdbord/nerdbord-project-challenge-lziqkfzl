@@ -5,8 +5,9 @@ import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { PiTrashSimple } from "react-icons/pi";
 import { BiPencil } from "react-icons/bi";
-import Image from "next/image";
+import { IoShareSocialOutline } from "react-icons/io5";
 import formImg from "../assets/form.png";
+import Link from "next/link";
 
 interface Form {
   id: string;
@@ -17,6 +18,7 @@ interface Form {
 
 export const Dashboard: React.FC = () => {
   const [msg, setMsg] = useState<string>("");
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const router = useRouter();
 
@@ -28,7 +30,7 @@ export const Dashboard: React.FC = () => {
       }
       return forms;
     } catch (error) {
-      setMsg("Błąd podczas pobierania formularzy: " + error);
+      setMsg("Błąd podczas pobierania formularzy: " + error);
       throw error;
     }
   };
@@ -38,12 +40,21 @@ export const Dashboard: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteForm(id);
-      setMsg("Formularz usunięty");
       mutate();
     } catch (error) {
-      setMsg("Wystąpił bład podczas usuwania formularza: " + error);
+      setMsg("Wystąpił błąd podczas usuwania formularza");
       return;
+    } finally {
+      setCopiedId(null);
+      setTimeout(() => setMsg(""), 3000);
     }
+  };
+
+  const handleCopyUrl = (id: string) => {
+    const url = `${window.location.origin}/preview/${id}`;
+    navigator.clipboard.writeText(url);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 3000);
   };
 
   if (!data && !error) {
@@ -55,34 +66,48 @@ export const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="pt-36 px-20 flex justify-center ">
-      {msg && <p className="text-pink-600">{msg}</p>}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="pt-36 px-20 flex justify-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
         {data && data.length === 0 && <p>No forms found</p>}
         {data &&
           data.length > 0 &&
           data.map((form: Form) => (
             <div
               key={form.id}
-              className="card card-side bg-base-100 shadow-xl w-96"
+              className="card card-side  bg-base-100 shadow-xl w-auto"
             >
-              <div className="card-body w-2/3">
-                <h2 className="card-title">{form.name}</h2>
-                <p>{form.description}</p>
-                <div className="card-actions justify-end mt-8">
+              <figure className="w-1/3 h-full">
+                <img
+                  src={formImg.src}
+                  alt="Form"
+                  className="object-cover h-full w-full"
+                />
+              </figure>
+              <div className="card-body w-2/3 flex flex-col justify-between gap-20">
+                <div>
+                  <h2 className="card-title">{form.name}</h2>
+                  <p>{form.description}</p>
+                </div>
+                {msg && <p className="text-pink-600">{msg}</p>}
+                <div className="card-actions justify-start">
                   <button
-                    className="btn btn-primary"
-                    onClick={() => router.push(`/forms/${form.id}`)}
+                    className="btn btn-secondary flex gap-2 items-center w-36"
+                    onClick={() => handleCopyUrl(form.id)}
                   >
-                    Edytuj
-                    <BiPencil className="w-4 h-4" />
+                    {copiedId === form.id ? "Skopiowano" : "Udostępnij"}
+                    <IoShareSocialOutline className="w-4 h-4" />
                   </button>
                   <button
-                    className="btn btn-error"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      handleDelete(form.id);
-                    }}
+                    className="btn btn-primary flex gap-2 items-center"
+                    onClick={() => router.push(`/forms/${form.id}`)}
+                  >
+                    <p>Edytuj</p>
+                    <BiPencil className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    className="btn btn-error flex gap-2 items-center"
+                    onClick={() => handleDelete(form.id)}
                   >
                     Usuń
                     <PiTrashSimple className="w-4 h-4" />
