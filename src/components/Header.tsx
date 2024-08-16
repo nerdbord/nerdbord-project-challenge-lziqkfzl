@@ -1,12 +1,7 @@
 import React from "react";
-import {
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
+import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
+import { HeaderButtons } from "@/components/HeaderButtons";
 import { RedirectButton } from "@/components/RedirectButton";
 
 type Props = {};
@@ -20,10 +15,8 @@ export const Header = async (props: Props) => {
       <div className="flex gap-6">
         {user ? (
           <>
-            <RedirectButton href="/forms">Moje formularze</RedirectButton>
-            <UserButton>
-              <button className="p-4"></button>
-            </UserButton>
+            <HeaderButtons />
+            <UserButton />
           </>
         ) : (
           <>

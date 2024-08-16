@@ -27,27 +27,45 @@ export const Form: React.FC<FormComponentProps> = ({
       {fields.map((field, index) => (
         <div key={index} className="mb-4 flex flex-col ">
           {isEdited === index ? null : (
-            <div className="mb-4 flex  space-x-4 ">
+            <div className="mb-4 flex space-x-4">
               {field.type === "radio" || field.type === "checkbox" ? (
-                <label className="flex items-center space-x-2">
-                  <input
-                    type={field.type}
-                    className={`${
-                      field.type === "radio"
-                        ? "radio radio-bordered"
-                        : "checkbox checkbox-bordered"
-                    }`}
-                  />
-                  <span className="label-text">{field.label}</span>
-                </label>
+                <div className="flex items-center w-full space-x-4">
+                  <label className="flex items-center space-x-2 flex-grow">
+                    <input
+                      type={field.type}
+                      className={`${
+                        field.type === "radio"
+                          ? "radio radio-bordered"
+                          : "checkbox checkbox-bordered"
+                      }`}
+                    />
+                    <span className="label-text">{field.label}</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => onStartEditing(index)}
+                    className="btn self-end"
+                  >
+                    Edytuj
+                  </button>
+                </div>
               ) : field.type === "color" ? (
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="color"
-                    className="w-16 h-10 border-2 border-gray-300 rounded-md"
-                  />
-                  <span className="label-text">{field.label}</span>
-                </label>
+                <div className="flex items-center w-full space-x-4">
+                  <label className="flex items-center space-x-2 flex-grow">
+                    <input
+                      type="color"
+                      className="w-16 h-10 border-2 border-gray-300 rounded-md"
+                    />
+                    <span className="label-text">{field.label}</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => onStartEditing(index)}
+                    className="btn self-end"
+                  >
+                    Edytuj
+                  </button>
+                </div>
               ) : (
                 <div className="flex items-center w-full space-x-4">
                   <div className="flex-grow">
