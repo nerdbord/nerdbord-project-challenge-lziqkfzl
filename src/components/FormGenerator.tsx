@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { checkUserInDatabase } from "@/actions/user";
 import { generateForm, saveForm } from "@/actions/form";
 import { Form } from "@/components/Form";
@@ -49,6 +49,7 @@ export const FormGenerator: React.FC = () => {
 
       if (!user || typeof user === "string") {
         setMsg("Aby zapisać formularz musisz być zalogowany.");
+        saveFormToSession();
         return;
       }
 
@@ -68,6 +69,15 @@ export const FormGenerator: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const saveFormToSession = () => {
+    const formState = {
+      form,
+      formName,
+      formDescription,
+    };
+    sessionStorage.setItem("unsavedForm", JSON.stringify(formState));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
