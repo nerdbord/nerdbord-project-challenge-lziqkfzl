@@ -44,29 +44,29 @@ export const FormFieldEditor: React.FC<FormFieldEditorProps> = ({
   return (
     <div className="flex flex-col gap-y-3">
       <label className="label-text mb-2">
-        Label
+        <span className="text-neutral-800">Label</span>
         <input
           type="text"
           value={editedField.label || ""}
           onChange={(e) => handleFieldChange("label", e.target.value)}
-          className="input input-bordered w-full mt-2"
+          className="input input-bordered w-full mt-2 bg-inherit"
         />
       </label>
       <label className="label-text mb-2">
-        Placeholder
+        <span className="text-neutral-800">Placeholder</span>
         <input
           type="text"
           value={editedField.placeholder || ""}
           onChange={(e) => handleFieldChange("placeholder", e.target.value)}
-          className="input input-bordered w-full mt-2"
+          className="input input-bordered w-full mt-2 bg-inherit"
         />
       </label>
       <label className="label-text mb-2">
-        Rodzaj pola
+        <span className="text-neutral-800">Rodzaj pola</span>
         <select
           value={editedField.type || "text"}
           onChange={(e) => handleFieldChange("type", e.target.value)}
-          className="select select-bordered w-full mt-2"
+          className="select select-bordered w-full mt-2 bg-inherit"
         >
           <option value="text">Text</option>
           <option value="textarea">Textarea</option>
@@ -90,16 +90,16 @@ export const FormFieldEditor: React.FC<FormFieldEditorProps> = ({
             }
             onChange={(e) => handleFieldChange("options", e.target.value)}
             placeholder="Opcje oddzielone przecinkami"
-            className="input input-bordered w-full mt-2"
+            className="input input-bordered w-full mt-2 bg-inherit"
           />
         </label>
       )}
-      <div className="flex justify-start mt-2 gap-2">
-        <button type="button" onClick={handleSave} className="btn btn-success">
+      <div className="flex justify-center mt-2 gap-2">
+        <button type="button" onClick={handleSave} className="btn btn-ghost">
           Zapisz
         </button>
-        <button type="button" onClick={onDelete} className="btn btn-error">
-          Usuń
+        <button type="button" onClick={onDelete} className="btn btn-ghost">
+          Usuń pole
         </button>
       </div>
     </div>

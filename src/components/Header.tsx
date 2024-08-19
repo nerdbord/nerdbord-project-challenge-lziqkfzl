@@ -1,18 +1,32 @@
-import React from "react";
-import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
-import { currentUser } from "@clerk/nextjs/server";
+"use client";
+import React, { useEffect, useState } from "react";
+import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
 import { HeaderButtons } from "@/components/HeaderButtons";
 import { RedirectButton } from "@/components/RedirectButton";
+import { usePathname } from "next/navigation";
+import Logo from "@/assets/Logo.png";
 
 type Props = {};
 
-export const Header = async (props: Props) => {
-  const user = await currentUser();
+export const Header = (props: Props) => {
+  const { isLoaded, user } = useUser();
+  const [isLoading, setIsLoading] = useState(true);
+
+  const pathname = usePathname();
+  const isPublic = pathname.startsWith("/public");
+
+  useEffect(() => {
+    if (isLoaded) {
+      setIsLoading(false);
+    }
+  }, [isLoaded]);
+
+  if (!user && isPublic) return null;
 
   return (
     <div className="flex justify-between items-center navbar fixed bg-white shadow-md  px-20 h-20">
       <RedirectButton className="btn btn-ghost" href="/">
-        FormuLator
+        <img src={Logo.src} alt="logo" />
       </RedirectButton>
       <div className="flex gap-6">
         {user ? (
