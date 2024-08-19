@@ -49,10 +49,18 @@ export const ReadyForm: React.FC = () => {
     >,
     name: string
   ) => {
-    const { type, checked, value } = e.target as HTMLInputElement;
+    const { type, checked, value, files } = e.target as HTMLInputElement;
+
     setFormValues((prevValues) => ({
       ...prevValues,
-      [name]: type === "checkbox" ? checked : value,
+      [name]:
+        type === "checkbox"
+          ? checked
+          : type === "file"
+          ? files
+            ? Array.from(files)
+            : null
+          : value,
     }));
   };
 
