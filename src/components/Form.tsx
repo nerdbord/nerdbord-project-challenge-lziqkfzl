@@ -46,7 +46,7 @@ export const Form: React.FC<FormComponentProps> = ({
                   <button
                     type="button"
                     onClick={() => onStartEditing(index)}
-                    className="btn self-end"
+                    className="btn btn-ghost  self-end"
                   >
                     Edytuj
                   </button>
@@ -65,7 +65,7 @@ export const Form: React.FC<FormComponentProps> = ({
                   <button
                     type="button"
                     onClick={() => onStartEditing(index)}
-                    className="btn self-end"
+                    className="btn btn-ghost  self-end"
                   >
                     Edytuj
                   </button>

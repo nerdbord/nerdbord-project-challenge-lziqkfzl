@@ -1,9 +1,10 @@
 import React from "react";
 import { IoShareSocialOutline } from "react-icons/io5";
 import { BiPencil } from "react-icons/bi";
-import { PiTrashSimple } from "react-icons/pi";
+import { IoEyeOutline, IoCheckmarkOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
 import formImg from "../assets/form.png";
+import { RedirectButton } from "./RedirectButton";
 
 interface FormCardProps {
   id: string;
@@ -40,27 +41,33 @@ export const FormCard: React.FC<FormCardProps> = ({
         </div>
         <div className="card-actions justify-start">
           <button
-            className="btn btn-accent flex gap-2 items-center w-36"
-            onClick={() => onCopyUrl(id)}
-          >
-            {copiedId === id ? "Skopiowano" : "Udostępnij"}
-            <IoShareSocialOutline className="w-4 h-4" />
-          </button>
-          <button
-            className="btn btn-ghost flex gap-2 items-center"
+            className="btn btn-accent flex gap-2 items-center"
             onClick={() => router.push(`/forms/${id}`)}
           >
             <p>Edytuj</p>
             <BiPencil className="w-4 h-4" />
           </button>
-
           <button
-            className="btn btn-ghost text-error flex gap-2 items-center"
-            onClick={() => onDelete(id)}
+            className="btn btn-outline text-black border-black flex gap-2 items-center w-36"
+            onClick={() => onCopyUrl(id)}
           >
-            Usuń
-            <PiTrashSimple className="w-4 h-4" />
+            {copiedId === id ? (
+              <>
+                Skopiowano <IoCheckmarkOutline />
+              </>
+            ) : (
+              <>
+                Udostępnij <IoShareSocialOutline className="w-4 h-4" />
+              </>
+            )}
           </button>
+
+          <RedirectButton
+            href={`/public/${id}`}
+            className="btn btn-outline text-black border-black flex items-center"
+          >
+            <IoEyeOutline />
+          </RedirectButton>
         </div>
       </div>
     </div>

@@ -88,11 +88,22 @@ export const FormGenerator: React.FC = () => {
       e.preventDefault();
       const generatedForm = await generateForm(prompt);
       setForm(generatedForm);
+
+      setFormName(extractFormTitleFromPrompt(prompt));
+      setFormDescription(prompt);
     } catch (err) {
       setMsg(`Nie udało się wygenerować formularza - ${err}`);
     } finally {
       setLoading(false);
     }
+  };
+
+  const extractFormTitleFromPrompt = (prompt: string): string => {
+    const maxLength = 30;
+    const trimmedTitle = prompt.trim().split(".")[0];
+    return trimmedTitle.length > maxLength
+      ? trimmedTitle.slice(0, maxLength) + "..."
+      : trimmedTitle;
   };
 
   const handleFieldChange = (index: number, updatedField: FormField) => {
@@ -120,6 +131,8 @@ export const FormGenerator: React.FC = () => {
 
   const handleReset = () => {
     setForm(null);
+    setFormName("");
+    setFormDescription("");
   };
 
   return (
@@ -161,7 +174,7 @@ export const FormGenerator: React.FC = () => {
                 onStartEditing={startEditing}
               />
             )}
-            {msg && <p className="text-center text-pink-500">{msg}</p>}
+            {msg && <p className="text-center text-accent">{msg}</p>}
             <button
               type="button"
               className={`btn btn-accent w-full`}

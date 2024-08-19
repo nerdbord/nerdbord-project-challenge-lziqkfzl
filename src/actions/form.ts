@@ -168,29 +168,30 @@ export const getFormById = async (id: string) => {
   }
 };
 
-export const saveSubmittedForm = async (data: any) => {
-  const saveFormSchema = z.object({
-    formId: z.string(),
-    userId: z.string(),
-    fields: z.record(z.string(), z.union([z.string(), z.boolean()])),
+export const saveSubmittedForm = async (data: {
+  formId: string;
+  fields: { [key: string]: any };
+  userId?: string;
+}) => {
+  const saveSubmittedFormSchema = z.object({
+    formId: z.string().cuid(),
+    fields: z.record(z.any()),
+    userId: z.string().cuid().optional(),
   });
 
-  const parsedData = saveFormSchema.safeParse(data);
+  const validatedData = saveSubmittedFormSchema.parse(data);
 
-  if (!parsedData.success) {
-    console.error(parsedData.error);
-    throw new Error("Invalid form data");
+  try {
+    const newSubmission = await prisma.submitedForm.create({
+      data: {
+        formId: validatedData.formId,
+        userId: validatedData.userId || "User not logged in",
+        fields: validatedData.fields,
+      },
+    });
+    return newSubmission;
+  } catch (error) {
+    console.error("Error saving submitted form:", error);
+    throw new Error("Nie udało się zapisać wypełnionego formularza.");
   }
-
-  const { formId, userId, fields } = parsedData.data;
-
-  const form = await prisma.submitedForm.create({
-    data: {
-      formId,
-      userId,
-      fields,
-    },
-  });
-
-  return form;
 };

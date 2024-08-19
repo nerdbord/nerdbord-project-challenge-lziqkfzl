@@ -10,11 +10,13 @@ export const HeaderButtons = (props: Props) => {
 
   return (
     <div className="flex gap-6">
-      {pathname === "/forms" && (
-        <RedirectButton href="/">Nowy formularz</RedirectButton>
-      )}
-      {pathname === "/" && (
+      {pathname === "/" ? (
         <RedirectButton href="/forms">Moje formularze</RedirectButton>
+      ) : (
+        <div className="flex gap-6">
+          <RedirectButton href="/">Nowy formularz</RedirectButton>
+          <RedirectButton href="/forms">Moje formularze</RedirectButton>
+        </div>
       )}
     </div>
   );

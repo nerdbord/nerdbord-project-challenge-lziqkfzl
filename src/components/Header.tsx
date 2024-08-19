@@ -3,6 +3,7 @@ import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
 import { HeaderButtons } from "@/components/HeaderButtons";
 import { RedirectButton } from "@/components/RedirectButton";
+import Logo from "@/assets/Logo.png";
 
 type Props = {};
 
@@ -12,7 +13,7 @@ export const Header = async (props: Props) => {
   return (
     <div className="flex justify-between items-center navbar fixed bg-white shadow-md  px-20 h-20">
       <RedirectButton className="btn btn-ghost" href="/">
-        FormuLator
+        <img src={Logo.src} alt="logo" />
       </RedirectButton>
       <div className="flex gap-6">
         {user ? (

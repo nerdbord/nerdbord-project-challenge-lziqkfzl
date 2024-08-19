@@ -88,8 +88,8 @@ export const FormDetails: React.FC = () => {
 
     try {
       await saveForm(form);
-      setMsg("Formularz zapisany pomyślnie!"); // Success message
-      mutate(); // Revalidate data after saving
+      setMsg("Formularz zapisany pomyślnie!");
+      mutate();
       router.push("/forms");
     } catch (error) {
       setMsg(`Wystąpił bład podczas zapisywania formularza - ${error}`);
@@ -120,19 +120,19 @@ export const FormDetails: React.FC = () => {
 
   return (
     <>
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen ">
         <div className="container flex flex-col justify-center p-4 max-w-lg">
           {form ? (
-            <div className="flex flex-col gap-y-3 border p-8 rounded-2xl mt-28">
+            <div className="flex flex-col gap-y-3 border p-8 rounded-2xl mt-28 bg-white">
               <input
                 type="text"
-                className="text-xl input input-bordered w-full"
+                className="text-xl input input-bordered w-full bg-inherit"
                 value={form.name}
                 onChange={handleNameChange}
                 placeholder="Form Name"
               />
               <textarea
-                className="text-md textarea textarea-bordered w-full"
+                className="text-md textarea textarea-bordered w-full bg-inherit"
                 value={form.description}
                 onChange={handleDescriptionChange}
                 placeholder="Form Description"
@@ -154,11 +154,11 @@ export const FormDetails: React.FC = () => {
                   onStartEditing={startEditing}
                 />
               )}
-              {msg && <p className="text-center text-pink-500">{msg}</p>}
+              {msg && <p className="text-center text-accent">{msg}</p>}
 
               <button
                 type="button"
-                className="btn btn-primary mt-6"
+                className="btn btn-accent mt-6"
                 onClick={handleSaveForm}
               >
                 Zapisz zmiany
@@ -181,26 +181,25 @@ export const FormDetails: React.FC = () => {
 
       {/* DaisyUI Modal */}
       {showModal && (
-        <div className="modal modal-open">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">Potwierdzenie usunięcia</h3>
-            <p className="py-4">
-              Czy na pewno chcesz usunąć ten formularz? Tej operacji nie można
-              cofnąć.
-            </p>
+        <div className="modal modal-open ">
+          <div className="modal-box bg-white">
+            <h3 className="text-2xl not-italic font-semibold leading-8">
+              Na pewno?
+            </h3>
+            <p className="py-4">Formularz zostanie bezpowrotnie usunięty.</p>
             <div className="modal-action">
               <button
-                className="btn btn-danger"
+                className="btn btn-ghost"
+                onClick={() => setShowModal(false)}
+              >
+                Anuluj
+              </button>
+              <button
+                className="btn btn-error"
                 onClick={handleDeleteForm}
                 disabled={loading}
               >
                 {loading ? "Usuwanie..." : "Usuń"}
-              </button>
-              <button
-                className="btn btn-primary"
-                onClick={() => setShowModal(false)}
-              >
-                Anuluj
               </button>
             </div>
           </div>
