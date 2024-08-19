@@ -38,9 +38,13 @@ export const Form: React.FC<FormComponentProps> = ({
                           ? "radio radio-bordered"
                           : "checkbox checkbox-bordered"
                       }`}
+                      required={field.required}
                     />
                     <span className="label-text text-neutral-800">
                       {field.label}
+                      {field.required && (
+                        <span className="text-red-500 ml-1">*</span>
+                      )}
                     </span>
                   </label>
                   <button
@@ -57,9 +61,13 @@ export const Form: React.FC<FormComponentProps> = ({
                     <input
                       type="color"
                       className="w-16 h-10 border-2 border-gray-300 rounded-md"
+                      required={field.required}
                     />
                     <span className="label-text text-neutral-800">
                       {field.label}
+                      {field.required && (
+                        <span className="text-red-500 ml-1">*</span>
+                      )}
                     </span>
                   </label>
                   <button
@@ -76,15 +84,22 @@ export const Form: React.FC<FormComponentProps> = ({
                     <label className="label ">
                       <span className="label-text text-neutral-800">
                         {field.label}
+                        {field.required && (
+                          <span className="text-red-500 ml-1">*</span>
+                        )}
                       </span>
                     </label>
                     {field.type === "textarea" ? (
                       <textarea
                         placeholder={field.placeholder}
                         className="textarea textarea-bordered w-full bg-inherit"
+                        required={field.required}
                       />
                     ) : field.type === "select" ? (
-                      <select className="select select-bordered w-full  bg-inherit">
+                      <select
+                        className="select select-bordered w-full bg-inherit"
+                        required={field.required}
+                      >
                         {field.options?.map((option, idx) => (
                           <option key={idx} value={option}>
                             {option}
@@ -105,6 +120,7 @@ export const Form: React.FC<FormComponentProps> = ({
                             ? "file-input file-input-bordered w-full bg-inherit"
                             : "input input-bordered w-full bg-inherit"
                         }`}
+                        required={field.required}
                       />
                     )}
                   </div>

@@ -56,10 +56,27 @@ export const ReadyForm: React.FC = () => {
     }));
   };
 
+  const validateForm = () => {
+    if (!form) return false;
+
+    for (const field of form.fields) {
+      if (field.required && !formValues[field.name]) {
+        setMsg(`Pole "${field.label}" jest wymagane.`);
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleSaveForm = async () => {
     if (!form) return;
 
     setMsg(null);
+
+    if (!validateForm()) {
+      return;
+    }
+
     setSaving(true);
 
     try {
@@ -71,6 +88,8 @@ export const ReadyForm: React.FC = () => {
       router.push("/public/thankyou");
     } catch (error) {
       setMsg("Failed to save form: " + error);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -92,7 +111,8 @@ export const ReadyForm: React.FC = () => {
               {form.fields.map((field, index) => (
                 <div key={index} className="mb-4">
                   <label className="block text-neutral-800 mb-2">
-                    {field.label}
+                    {field.label}{" "}
+                    {field.required && <span className="text-red-500">*</span>}
                   </label>
                   {field.type === "textarea" ? (
                     <textarea
@@ -165,12 +185,13 @@ export const ReadyForm: React.FC = () => {
                 </div>
               ))}
 
-              {msg && <p className="text-center text-pink-500">{msg}</p>}
+              {msg && <p className="text-center text-accent">{msg}</p>}
 
               <button
                 type="button"
                 className="btn mt-6"
                 onClick={handleSaveForm}
+                disabled={saving}
               >
                 {saving ? "Wysyłanie..." : "Wyślij moją odpowiedź"}
               </button>
