@@ -74,6 +74,7 @@ export const ReadyForm: React.FC = () => {
     setMsg(null);
 
     if (!validateForm()) {
+      setMsg("Wystąpił błąd podczas walidacji formularza");
       return;
     }
 
@@ -185,7 +186,7 @@ export const ReadyForm: React.FC = () => {
                 </div>
               ))}
 
-              {msg && <p className="text-center text-accent">{msg}</p>}
+              {msg && <p className="text-center text-pink-500">{msg}</p>}
 
               <button
                 type="button"
