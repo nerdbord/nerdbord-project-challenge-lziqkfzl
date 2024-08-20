@@ -32,13 +32,39 @@ export const FormGenerator: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const unsavedForm = sessionStorage.getItem("unsavedForm");
-    if (unsavedForm) {
-      const { form, formName, formDescription } = JSON.parse(unsavedForm);
-      setForm(form);
-      setFormName(formName);
-      setFormDescription(formDescription);
-    }
+    const restoreForm = async () => {
+      const unsavedForm = sessionStorage.getItem("unsavedForm");
+      if (unsavedForm) {
+        const { form, formName, formDescription } = JSON.parse(unsavedForm);
+        setForm(form);
+        setFormName(formName);
+        setFormDescription(formDescription);
+
+        const user = await checkUserInDatabase();
+
+        if (user && typeof user !== "string") {
+          try {
+            setLoading(true);
+            const savedForm = await saveForm({
+              userId: user.id,
+              name: formName,
+              description: formDescription || "Wygenerowany przez AI",
+              fields: form.fields,
+            });
+            sessionStorage.removeItem("unsavedForm");
+            setMsg("Formularz zapisany pomyślnie.");
+          } catch (err) {
+            setMsg("Nie udało się zapisać formularza. Spróbuj ponownie.");
+          } finally {
+            setLoading(false);
+          }
+        } else {
+          setMsg("Aby zapisać formularz musisz być zalogowany.");
+        }
+      }
+    };
+
+    restoreForm();
   }, []);
 
   const handleSaveForm = async () => {
@@ -71,6 +97,7 @@ export const FormGenerator: React.FC = () => {
       });
 
       setMsg("Formularz zapisany pomyślnie. Przekierowywanie do formularzy...");
+      sessionStorage.removeItem("unsavedForm");
       setTimeout(() => {
         router.push("/forms");
       }, 2000);
@@ -78,7 +105,6 @@ export const FormGenerator: React.FC = () => {
       setMsg("Nie udało się zapisać formularza. Spróbuj ponownie.");
     } finally {
       setLoading(false);
-      sessionStorage.removeItem("unsavedForm");
     }
   };
 
@@ -185,10 +211,14 @@ export const FormGenerator: React.FC = () => {
                 onStartEditing={startEditing}
               />
             )}
-            {msg && <p className="text-center text-accent">{msg}</p>}
+            {msg && (
+              <p className="text-center text-accent absolute left-0 right-0 bottom-9">
+                {msg}
+              </p>
+            )}
             <button
               type="button"
-              className={`btn btn-accent w-full`}
+              className={`btn btn-accent w-full mt-2`}
               disabled={loading || isEdited !== null}
               onClick={handleSaveForm}
             >
