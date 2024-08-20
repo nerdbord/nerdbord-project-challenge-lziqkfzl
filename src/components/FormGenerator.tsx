@@ -31,6 +31,16 @@ export const FormGenerator: React.FC = () => {
 
   const router = useRouter();
 
+  useEffect(() => {
+    const unsavedForm = sessionStorage.getItem("unsavedForm");
+    if (unsavedForm) {
+      const { form, formName, formDescription } = JSON.parse(unsavedForm);
+      setForm(form);
+      setFormName(formName);
+      setFormDescription(formDescription);
+    }
+  }, []);
+
   const handleSaveForm = async () => {
     if (!form) {
       setMsg("Nie ma formularza do zapisania.");
@@ -68,6 +78,7 @@ export const FormGenerator: React.FC = () => {
       setMsg("Nie udało się zapisać formularza. Spróbuj ponownie.");
     } finally {
       setLoading(false);
+      sessionStorage.removeItem("unsavedForm");
     }
   };
 
@@ -186,7 +197,6 @@ export const FormGenerator: React.FC = () => {
             <button
               type="button"
               className="btn  w-full "
-              disabled={loading || isEdited !== null}
               onClick={handleReset}
             >
               Generuj nowy formularz
@@ -209,11 +219,7 @@ export const FormGenerator: React.FC = () => {
                 className="input input-bordered w-full h-24 p-4 rounded-lg bg-white"
               />
             </div>
-            <button
-              type="submit"
-              className={`btn btn-accent w-full`}
-              disabled={loading || isEdited !== null}
-            >
+            <button type="submit" className={`btn btn-accent w-full`}>
               {loading ? "Generuje..." : "Wygeneruj mój formularz"}
             </button>
           </form>
